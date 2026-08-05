@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 48% 91%; /* #F5EDDD - cream */
+    --foreground: 23 26% 13%; /* #2B211A - dark */
+
+    --card: 0 0% 100%; /* #FFFFFF - white */
+    --card-foreground: 23 26% 13%; /* #2B211A - dark */
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 23 26% 13%;
+
+    --primary: 40 66% 54%; /* #D8A63E - gold */
+    --primary-foreground: 23 26% 13%; /* #2B211A - dark */
+
+    --secondary: 40 42% 74%; /* #D9C7A3 - blush */
+    --secondary-foreground: 23 26% 13%;
+
+    --muted: 40 30% 86%;
+    --muted-foreground: 23 15% 35%;
+
+    --accent: 40 66% 54%; /* #D8A63E - gold */
+    --accent-foreground: 23 26% 13%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 40 42% 74%; /* #D9C7A3 - blush */
+    --input: 40 42% 74%;
+    --ring: 40 66% 54%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-cream text-dark antialiased font-sans min-h-screen selection:bg-gold selection:text-dark;
+    background-color: #F5EDDD;
+    color: #2B211A;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
