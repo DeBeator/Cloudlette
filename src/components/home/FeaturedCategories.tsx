@@ -24,7 +24,7 @@ const CATEGORIES = [
     name: "Tops",
     slug: "top",
     // TODO: replace with real category photography from client
-    image: "https://images.unsplash.com/photo-1604014237800-1c9102c219da?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=800&q=80",
     tagline: "Fluid Silk & Satin Wraps",
   },
 ];

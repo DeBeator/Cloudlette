@@ -44,16 +44,6 @@ export default function HomePage() {
               Good clothes for real life.
             </motion.h1>
 
-            {/* Subtext */}
-            <motion.p
-              initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
-              animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.35 }}
-              className="text-sm sm:text-base text-cream-light/80 font-light leading-relaxed max-w-md"
-            >
-              Good clothes. Real style. Made for you.
-            </motion.p>
-
             {/* Pill CTA: Understated outline style, small size */}
             <motion.div
               initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}

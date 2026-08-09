@@ -61,8 +61,8 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["fast-selling", "new-arrival"],
     variants: [
-      { id: "var-1-1", size: null, color: "Tan Brown", colorHex: "#8B5A2B", stockQty: 5, sku: "CLD-AUR-TAN" },
-      { id: "var-1-2", size: null, color: "Midnight Black", colorHex: "#1C1C1C", stockQty: 3, sku: "CLD-AUR-BLK" },
+      { id: "var-1-1", size: null, color: "Tan Brown", colorHex: "#8B5A2B", stockQty: 12, sku: "CLD-AUR-TAN" },
+      { id: "var-1-2", size: null, color: "Midnight Black", colorHex: "#1C1C1C", stockQty: 8, sku: "CLD-AUR-BLK" },
       { id: "var-1-3", size: null, color: "Ivory Cream", colorHex: "#F9F6EE", stockQty: 0, sku: "CLD-AUR-CRM" },
     ],
   },
@@ -80,9 +80,9 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["new-arrival"],
     variants: [
-      { id: "var-2-1", size: "S", color: "Blush Pink", colorHex: "#E8C5C8", stockQty: 4, sku: "CLD-SIE-PNK-S" },
-      { id: "var-2-2", size: "M", color: "Blush Pink", colorHex: "#E8C5C8", stockQty: 6, sku: "CLD-SIE-PNK-M" },
-      { id: "var-2-3", size: "L", color: "Blush Pink", colorHex: "#E8C5C8", stockQty: 0, sku: "CLD-SIE-PNK-L" },
+      { id: "var-2-1", size: "S", color: "Blush Pink", colorHex: "#E8C5C8", stockQty: 14, sku: "CLD-SIE-PNK-S" },
+      { id: "var-2-2", size: "M", color: "Blush Pink", colorHex: "#E8C5C8", stockQty: 10, sku: "CLD-SIE-PNK-M" },
+      { id: "var-2-3", size: "L", color: "Blush Pink", colorHex: "#E8C5C8", stockQty: 6, sku: "CLD-SIE-PNK-L" },
       { id: "var-2-4", size: "M", color: "Champagne Gold", colorHex: "#D4AF37", stockQty: 2, sku: "CLD-SIE-GLD-M" },
     ],
   },
@@ -100,10 +100,10 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["fast-selling"],
     variants: [
-      { id: "var-3-1", size: "38", color: "Emerald Green", colorHex: "#046307", stockQty: 3, sku: "CLD-LGS-EMR-38" },
-      { id: "var-3-2", size: "39", color: "Emerald Green", colorHex: "#046307", stockQty: 4, sku: "CLD-LGS-EMR-39" },
-      { id: "var-3-3", size: "40", color: "Emerald Green", colorHex: "#046307", stockQty: 0, sku: "CLD-LGS-EMR-40" },
-      { id: "var-3-4", size: "39", color: "Rich Nude", colorHex: "#D2B48C", stockQty: 2, sku: "CLD-LGS-NUD-39" },
+      { id: "var-3-1", size: "38", color: "Emerald Green", colorHex: "#046307", stockQty: 13, sku: "CLD-LGS-EMR-38" },
+      { id: "var-3-2", size: "39", color: "Emerald Green", colorHex: "#046307", stockQty: 14, sku: "CLD-LGS-EMR-39" },
+      { id: "var-3-3", size: "40", color: "Emerald Green", colorHex: "#046307", stockQty: 9, sku: "CLD-LGS-EMR-40" },
+      { id: "var-3-4", size: "39", color: "Rich Nude", colorHex: "#D2B48C", stockQty: 3, sku: "CLD-LGS-NUD-39" },
     ],
   },
   {
@@ -119,8 +119,8 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["new-arrival"],
     variants: [
-      { id: "var-4-1", size: null, color: "Honey Beige", colorHex: "#E3C9A6", stockQty: 6, sku: "CLD-CEL-BEI" },
-      { id: "var-4-2", size: null, color: "Olive Green", colorHex: "#556B2F", stockQty: 2, sku: "CLD-CEL-OLV" },
+      { id: "var-4-1", size: null, color: "Honey Beige", colorHex: "#E3C9A6", stockQty: 16, sku: "CLD-CEL-BEI" },
+      { id: "var-4-2", size: null, color: "Olive Green", colorHex: "#556B2F", stockQty: 1, sku: "CLD-CEL-OLV" },
     ],
   },
   {
@@ -136,9 +136,9 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["fast-selling"],
     variants: [
-      { id: "var-5-1", size: "S", color: "Royal Burgundy", colorHex: "#6B1D2F", stockQty: 2, sku: "CLD-ZAR-BUR-S" },
-      { id: "var-5-2", size: "M", color: "Royal Burgundy", colorHex: "#6B1D2F", stockQty: 5, sku: "CLD-ZAR-BUR-M" },
-      { id: "var-5-3", size: "L", color: "Royal Burgundy", colorHex: "#6B1D2F", stockQty: 1, sku: "CLD-ZAR-BUR-L" },
+      { id: "var-5-1", size: "S", color: "Royal Burgundy", colorHex: "#6B1D2F", stockQty: 12, sku: "CLD-ZAR-BUR-S" },
+      { id: "var-5-2", size: "M", color: "Royal Burgundy", colorHex: "#6B1D2F", stockQty: 15, sku: "CLD-ZAR-BUR-M" },
+      { id: "var-5-3", size: "L", color: "Royal Burgundy", colorHex: "#6B1D2F", stockQty: 11, sku: "CLD-ZAR-BUR-L" },
     ],
   },
   {
@@ -154,9 +154,9 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["fast-selling", "new-arrival"],
     variants: [
-      { id: "var-6-1", size: "37", color: "Cognac Leather", colorHex: "#9E471D", stockQty: 3, sku: "CLD-VAL-COG-37" },
-      { id: "var-6-2", size: "38", color: "Cognac Leather", colorHex: "#9E471D", stockQty: 0, sku: "CLD-VAL-COG-38" },
-      { id: "var-6-3", size: "39", color: "Cognac Leather", colorHex: "#9E471D", stockQty: 4, sku: "CLD-VAL-COG-39" },
+      { id: "var-6-1", size: "37", color: "Cognac Leather", colorHex: "#9E471D", stockQty: 13, sku: "CLD-VAL-COG-37" },
+      { id: "var-6-2", size: "38", color: "Cognac Leather", colorHex: "#9E471D", stockQty: 8, sku: "CLD-VAL-COG-38" },
+      { id: "var-6-3", size: "39", color: "Cognac Leather", colorHex: "#9E471D", stockQty: 14, sku: "CLD-VAL-COG-39" },
     ],
   },
   {
@@ -172,8 +172,8 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["new-arrival"],
     variants: [
-      { id: "var-7-1", size: null, color: "Silver Metallic", colorHex: "#C0C0C0", stockQty: 4, sku: "CLD-NOR-SLV" },
-      { id: "var-7-2", size: null, color: "Rose Gold", colorHex: "#B76E79", stockQty: 3, sku: "CLD-NOR-RGLD" },
+      { id: "var-7-1", size: null, color: "Silver Metallic", colorHex: "#C0C0C0", stockQty: 14, sku: "CLD-NOR-SLV" },
+      { id: "var-7-2", size: null, color: "Rose Gold", colorHex: "#B76E79", stockQty: 13, sku: "CLD-NOR-RGLD" },
     ],
   },
   {
@@ -189,9 +189,9 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: [],
     variants: [
-      { id: "var-8-1", size: "S", color: "Oatmeal Natural", colorHex: "#E3DAC9", stockQty: 3, sku: "CLD-KAN-OAT-S" },
-      { id: "var-8-2", size: "M", color: "Oatmeal Natural", colorHex: "#E3DAC9", stockQty: 2, sku: "CLD-KAN-OAT-M" },
-      { id: "var-8-3", size: "L", color: "Oatmeal Natural", colorHex: "#E3DAC9", stockQty: 0, sku: "CLD-KAN-OAT-L" },
+      { id: "var-8-1", size: "S", color: "Oatmeal Natural", colorHex: "#E3DAC9", stockQty: 13, sku: "CLD-KAN-OAT-S" },
+      { id: "var-8-2", size: "M", color: "Oatmeal Natural", colorHex: "#E3DAC9", stockQty: 12, sku: "CLD-KAN-OAT-M" },
+      { id: "var-8-3", size: "L", color: "Oatmeal Natural", colorHex: "#E3DAC9", stockQty: 7, sku: "CLD-KAN-OAT-L" },
     ],
   },
   {
@@ -207,9 +207,9 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["fast-selling"],
     variants: [
-      { id: "var-9-1", size: "38", color: "Gold Metallic", colorHex: "#D8A63E", stockQty: 2, sku: "CLD-AMN-GLD-38" },
-      { id: "var-9-2", size: "39", color: "Gold Metallic", colorHex: "#D8A63E", stockQty: 0, sku: "CLD-AMN-GLD-39" },
-      { id: "var-9-3", size: "40", color: "Black Patent", colorHex: "#0D0D0D", stockQty: 5, sku: "CLD-AMN-BLK-40" },
+      { id: "var-9-1", size: "38", color: "Gold Metallic", colorHex: "#D8A63E", stockQty: 12, sku: "CLD-AMN-GLD-38" },
+      { id: "var-9-2", size: "39", color: "Gold Metallic", colorHex: "#D8A63E", stockQty: 8, sku: "CLD-AMN-GLD-39" },
+      { id: "var-9-3", size: "40", color: "Black Patent", colorHex: "#0D0D0D", stockQty: 15, sku: "CLD-AMN-BLK-40" },
     ],
   },
   {
@@ -225,8 +225,8 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["new-arrival"],
     variants: [
-      { id: "var-10-1", size: null, color: "Terracotta", colorHex: "#C86446", stockQty: 5, sku: "CLD-TAR-TER" },
-      { id: "var-10-2", size: null, color: "Deep Forest", colorHex: "#1C3B2B", stockQty: 1, sku: "CLD-TAR-FOR" },
+      { id: "var-10-1", size: null, color: "Terracotta", colorHex: "#C86446", stockQty: 15, sku: "CLD-TAR-TER" },
+      { id: "var-10-2", size: null, color: "Deep Forest", colorHex: "#1C3B2B", stockQty: 9, sku: "CLD-TAR-FOR" },
     ],
   },
   {
@@ -242,9 +242,9 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: ["fast-selling"],
     variants: [
-      { id: "var-11-1", size: "XS", color: "Cream White", colorHex: "#FFFDD0", stockQty: 4, sku: "CLD-ENG-CRM-XS" },
-      { id: "var-11-2", size: "S", color: "Cream White", colorHex: "#FFFDD0", stockQty: 7, sku: "CLD-ENG-CRM-S" },
-      { id: "var-11-3", size: "M", color: "Cream White", colorHex: "#FFFDD0", stockQty: 0, sku: "CLD-ENG-CRM-M" },
+      { id: "var-11-1", size: "XS", color: "Cream White", colorHex: "#FFFDD0", stockQty: 14, sku: "CLD-ENG-CRM-XS" },
+      { id: "var-11-2", size: "S", color: "Cream White", colorHex: "#FFFDD0", stockQty: 17, sku: "CLD-ENG-CRM-S" },
+      { id: "var-11-3", size: "M", color: "Cream White", colorHex: "#FFFDD0", stockQty: 8, sku: "CLD-ENG-CRM-M" },
     ],
   },
   {
@@ -260,8 +260,8 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     tags: [],
     variants: [
-      { id: "var-12-1", size: "38", color: "Natural Straw", colorHex: "#E8D8B0", stockQty: 0, sku: "CLD-IBD-STR-38" },
-      { id: "var-12-2", size: "39", color: "Natural Straw", colorHex: "#E8D8B0", stockQty: 0, sku: "CLD-IBD-STR-39" },
+      { id: "var-12-1", size: "38", color: "Natural Straw", colorHex: "#E8D8B0", stockQty: 10, sku: "CLD-IBD-STR-38" },
+      { id: "var-12-2", size: "39", color: "Natural Straw", colorHex: "#E8D8B0", stockQty: 16, sku: "CLD-IBD-STR-39" },
     ],
   },
 ];

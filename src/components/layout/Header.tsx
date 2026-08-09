@@ -2,12 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, User, Menu, X, LogOut, Package } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { cn } from "@/lib/utils";
 
 export function Header() {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -100,16 +103,29 @@ export function Header() {
 
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex space-x-9">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-xs font-medium uppercase tracking-[0.18em] text-dark/90 hover:text-gold transition-colors relative group py-1"
-              >
-                {link.name}
-                <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-gold transition-all duration-300 ease-out group-hover:w-full" />
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={cn(
+                    "text-xs uppercase tracking-[0.18em] transition-colors relative group py-1",
+                    isActive
+                      ? "text-gold font-medium"
+                      : "font-medium text-dark/90 hover:text-gold"
+                  )}
+                >
+                  {link.name}
+                  <span
+                    className={cn(
+                      "absolute bottom-0 left-0 h-[1.5px] bg-gold transition-all duration-300 ease-out",
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    )}
+                  />
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Icons (Cart & Account) */}
@@ -188,38 +204,58 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile menu dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-blush/40 bg-cream/98 px-6 pt-3 pb-6 space-y-3 shadow-lg">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-xs font-semibold uppercase tracking-[0.2em] text-dark hover:text-gold transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
-          {mounted && isAuthenticated ? (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="block py-2 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600 hover:text-rose-700 transition-colors w-full text-left"
-            >
-              Sign Out
-            </button>
-          ) : (
-            <Link
-              href="/login"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold hover:text-gold-hover transition-colors"
-            >
-              Sign In
-            </Link>
-          )}
-        </div>
-      )}
+      {/* Mobile menu dropdown with AnimatePresence */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden border-t border-blush/40 bg-cream/98 px-6 pt-3 pb-6 space-y-3 shadow-lg"
+          >
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    "block py-2 text-xs uppercase tracking-[0.2em] transition-colors",
+                    isActive
+                      ? "text-gold font-medium"
+                      : "font-semibold text-dark hover:text-gold"
+                  )}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+            {mounted && isAuthenticated ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="block py-2 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600 hover:text-rose-700 transition-colors w-full text-left"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  "block py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-colors",
+                  pathname === "/login" ? "text-gold font-medium" : "text-gold hover:text-gold-hover"
+                )}
+              >
+                Sign In
+              </Link>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
+

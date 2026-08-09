@@ -55,7 +55,7 @@ export function Footer() {
             </p>
             <div className="flex space-x-3 pt-2">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/bycloudlette"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 rounded-full bg-cream/5 text-cream/80 hover:text-gold hover:bg-cream/10 transition-colors"
@@ -64,22 +64,16 @@ export function Footer() {
                 <Instagram className="h-4 w-4 stroke-[1.5]" />
               </a>
               <a
-                href="https://tiktok.com"
+                href="https://www.tiktok.com/@bycloudlette"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 rounded-full bg-cream/5 text-cream/80 hover:text-gold hover:bg-cream/10 transition-colors"
+                className="w-9 h-9 rounded-full bg-cream/5 text-cream/80 hover:text-gold hover:bg-cream/10 transition-colors flex items-center justify-center font-bold text-xs tracking-tighter"
                 aria-label="TikTok"
               >
-                <svg
-                  className="h-4 w-4 fill-current"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V6.04a6.28 6.28 0 0 0-1-.08 6.34 6.34 0 1 0 6.34 6.34V9.4a8.16 8.16 0 0 0 4.89 1.62V7.57a4.85 4.85 0 0 1-1-.88z" />
-                </svg>
+                TT
               </a>
               <a
-                href="https://wa.me/"
+                href="https://wa.me/message/23DKTWB4MIAEE1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 rounded-full bg-cream/5 text-cream/80 hover:text-gold hover:bg-cream/10 transition-colors"

@@ -14,23 +14,33 @@ export interface StockItem {
   stockQty: number;
 }
 
-// Flatten all product variants into individual stock items with sample stock values
+// Flatten all product variants into individual stock items with realistic inventory values
 function buildInitialStockItems(): StockItem[] {
   const items: StockItem[] = [];
 
+  // Map of specific variant IDs for controlled low/out-of-stock count
+  const SPECIFIC_STOCK: Record<string, number> = {
+    "var-1-3": 0, // 1 Out of Stock (0)
+    "var-4-2": 1, // Low Stock (1)
+    "var-2-4": 2, // Low Stock (2)
+    "var-3-4": 3, // Low Stock (3)
+  };
+
+  let counter = 0;
+
   MOCK_PRODUCTS.forEach((product) => {
     product.variants.forEach((v, index) => {
-      let qty = v.stock_qty ?? v.stockQty;
+      counter++;
+      const variantId = v.id || `${product.id}-var-${index}`;
+
+      let qty = SPECIFIC_STOCK[variantId];
       if (qty === undefined) {
-        // Sample low stock values for specific variants
-        if (product.id === "prod-1" && index === 0) qty = 2; // Low stock (2)
-        else if (product.id === "prod-4" && index === 0) qty = 1; // Low stock (1)
-        else if (product.id === "prod-2" && index === 0) qty = 3; // Low stock (3)
-        else qty = 8 + index * 4;
+        // Realistic stock in range 5–20 units
+        qty = 5 + ((counter * 7 + index * 3) % 16);
       }
 
       items.push({
-        variantId: v.id || `${product.id}-var-${index}`,
+        variantId,
         productId: product.id,
         productName: product.name,
         category: product.category,

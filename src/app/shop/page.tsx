@@ -80,9 +80,9 @@ function ShopContent() {
         </p>
       </div>
 
-      {/* Filter Tabs - Clean underline tabs (no background fill, no outlines) */}
-      <div className="overflow-x-auto pb-3 mb-10 no-scrollbar border-b border-blush/40">
-        <div className="flex items-center space-x-6 sm:space-x-8 min-w-max">
+      {/* Filter Tabs - Clean underline tabs with smooth horizontal scrolling */}
+      <div className="overflow-x-auto scrollbar-hide pb-3 mb-10 no-scrollbar border-b border-blush/40">
+        <div className="flex items-center space-x-5 sm:space-x-8 min-w-max">
           {FILTER_TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -90,7 +90,7 @@ function ShopContent() {
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
                 className={cn(
-                  "text-xs sm:text-sm font-semibold uppercase tracking-[0.18em] pb-1 border-b-2 transition-all duration-200 whitespace-nowrap focus:outline-none",
+                  "text-xs sm:text-sm font-semibold uppercase tracking-[0.18em] pb-1 border-b-2 transition-all duration-200 whitespace-nowrap flex-shrink-0 focus:outline-none",
                   isActive
                     ? "border-gold text-dark"
                     : "border-transparent text-dark-muted/60 hover:text-dark"

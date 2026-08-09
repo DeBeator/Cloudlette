@@ -455,7 +455,9 @@ function CheckoutForm() {
                       Home Delivery
                     </p>
                     <p className="text-[11px] text-dark-muted font-light mt-0.5">
-                      Direct to your doorstep
+                      {selectedState.toLowerCase().includes("lagos")
+                        ? "Delivery within 24–48 hours (excluding Sundays)"
+                        : "3–5 working days after dispatch"}
                     </p>
                   </div>
                 </button>
@@ -488,7 +490,7 @@ function CheckoutForm() {
                       Pickup (Berger Park)
                     </p>
                     <p className="text-[11px] text-dark-muted font-light mt-0.5">
-                      Lagos station pickup
+                      Pick up at Berger Park, Lagos — ₦1,000 to the storekeeper
                     </p>
                   </div>
                 </button>
@@ -514,7 +516,7 @@ function CheckoutForm() {
                     <span>Pickup Location</span>
                   </div>
                   <p className="text-xs text-dark-muted leading-relaxed">
-                    Pick up from Berger Park, Lagos. We'll notify you when your order is ready.
+                    Pick up at Berger Park, Lagos — ₦1,000 to the storekeeper. We&apos;ll notify you when your order is ready.
                   </p>
                 </div>
               ) : (
