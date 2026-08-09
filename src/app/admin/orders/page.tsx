@@ -99,8 +99,8 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Orders Table */}
-      <div className="bg-white rounded-3xl border border-blush/60 shadow-xs overflow-hidden">
+      {/* Desktop Orders Table (hidden on mobile) */}
+      <div className="hidden md:block bg-white rounded-3xl border border-blush/60 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[750px]">
             <thead>
@@ -193,6 +193,79 @@ export default function AdminOrdersPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Orders Card List View (visible below md) */}
+      <div className="md:hidden space-y-4">
+        {filteredOrders.length > 0 ? (
+          filteredOrders.map((order) => (
+            <div key={order.id} className="bg-white rounded-3xl p-5 border border-blush/60 shadow-xs space-y-3.5">
+              {/* Reference Pill + Status Badge */}
+              <div className="flex items-center justify-between gap-2">
+                <span className="bg-gold/15 text-gold-hover font-mono px-3 py-1 rounded-full text-xs font-bold border border-gold/30">
+                  {order.id}
+                </span>
+                <StatusBadge status={order.status} />
+              </div>
+
+              {/* Customer Name & Short Date */}
+              <div className="flex items-baseline justify-between gap-2 border-b border-blush/40 pb-3 pt-1">
+                <div>
+                  <h3 className="font-heading text-base font-semibold text-dark">
+                    {order.customer.name}
+                  </h3>
+                  <p className="text-xs text-dark-muted font-light mt-0.5">
+                    {order.customer.email}
+                  </p>
+                </div>
+                <span className="text-xs text-dark-muted font-light whitespace-nowrap">
+                  {formatDate(order.date)}
+                </span>
+              </div>
+
+              {/* Total & Item Count */}
+              <div className="flex items-center justify-between text-xs pt-0.5">
+                <span className="text-dark-muted">{getItemsSummaryText(order)}</span>
+                <span className="font-mono font-bold text-sm text-gold-hover">
+                  {formatPrice(order.total)}
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2.5 pt-2 border-t border-blush/40">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 rounded-full text-xs font-semibold border-blush/60 hover:border-gold hover:text-gold"
+                >
+                  <Link href={`/admin/orders/${order.id}`} className="inline-flex items-center justify-center">
+                    <Eye className="h-3.5 w-3.5 mr-1.5" />
+                    <span>View</span>
+                  </Link>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedOrderForUpdate(order);
+                    setNewStatus(order.status);
+                  }}
+                  className="flex-1 rounded-full text-xs font-semibold text-dark border-blush/60 hover:bg-cream-light"
+                >
+                  <Edit3 className="h-3.5 w-3.5 mr-1.5 text-gold" />
+                  <span>Update</span>
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-12 text-center text-dark-muted italic bg-white rounded-3xl border border-blush/60">
+            No orders found matching search criteria.
+          </div>
+        )}
       </div>
 
       {/* Update Status Modal */}

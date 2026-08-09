@@ -94,8 +94,8 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
-      {/* Products Table Area */}
-      <div className="bg-white rounded-3xl border border-blush/60 shadow-xs overflow-hidden">
+      {/* Desktop Products Table Area (hidden on mobile) */}
+      <div className="hidden md:block bg-white rounded-3xl border border-blush/60 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
@@ -203,6 +203,75 @@ export default function AdminProductsPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Products Card List View (visible below md) */}
+      <div className="md:hidden space-y-4">
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            <div key={product.id} className="bg-white rounded-3xl p-5 border border-blush/60 shadow-xs space-y-4">
+              <div className="flex items-start space-x-3.5">
+                <div className="relative w-16 h-20 bg-cream-light rounded-xl overflow-hidden flex-shrink-0 border border-blush/40">
+                  <Image
+                    src={product.images[0]}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-300">
+                      Active
+                    </span>
+                    <span className="font-mono text-xs font-bold text-gold-hover">
+                      {formatPrice(product.price)}
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-base font-medium text-dark mt-1 truncate">
+                    {product.name}
+                  </h3>
+                  <p className="text-xs text-dark-muted capitalize mt-0.5">
+                    Category: {product.category}
+                  </p>
+                  <p className="text-[11px] text-dark-muted font-mono mt-0.5">
+                    ID: {product.id}
+                  </p>
+                </div>
+              </div>
+
+              {/* Stacked Action Buttons */}
+              <div className="flex items-center gap-2.5 pt-2 border-t border-blush/40">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 rounded-full text-xs font-semibold border-blush/60 hover:border-gold hover:text-gold"
+                >
+                  <Link href={`/admin/products/${product.id}/edit`} className="inline-flex items-center justify-center">
+                    <Edit2 className="h-3.5 w-3.5 mr-1.5" />
+                    <span>Edit</span>
+                  </Link>
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setProductToDelete(product)}
+                  className="flex-1 rounded-full text-xs font-semibold text-rose-600 border-rose-200 hover:bg-rose-50 hover:border-rose-300"
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                  <span>Delete</span>
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="py-12 text-center text-dark-muted italic bg-white rounded-3xl border border-blush/60">
+            No products found matching your search.
+          </div>
+        )}
       </div>
 
       {/* Delete Confirmation Modal Stub */}

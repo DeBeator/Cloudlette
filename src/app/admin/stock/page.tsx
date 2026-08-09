@@ -97,8 +97,8 @@ export default function AdminStockPage() {
         </div>
       </div>
 
-      {/* Stock Inventory Table */}
-      <div className="bg-white rounded-3xl border border-blush/60 shadow-xs overflow-hidden">
+      {/* Desktop Stock Inventory Table (hidden on mobile) */}
+      <div className="hidden md:block bg-white rounded-3xl border border-blush/60 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[750px]">
             <thead>
@@ -198,6 +198,69 @@ export default function AdminStockPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Stock Card List View (visible below md) */}
+      <div className="md:hidden space-y-4">
+        {filteredItems.length > 0 ? (
+          filteredItems.map((item) => {
+            const statusInfo = getStockStatusInfo(item.stockQty);
+            return (
+              <div key={item.variantId} className="bg-white rounded-3xl p-5 border border-blush/60 shadow-xs space-y-4">
+                <div className="flex items-start space-x-3.5">
+                  <div className="relative w-16 h-20 bg-cream-light rounded-xl overflow-hidden flex-shrink-0 border border-blush/40">
+                    <Image
+                      src={item.image}
+                      alt={item.productName}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${statusInfo.badgeStyle}`}>
+                        {statusInfo.label}
+                      </span>
+                      <span className="font-mono text-xs font-bold text-dark">
+                        Qty: {item.stockQty}
+                      </span>
+                    </div>
+                    <h3 className="font-heading text-base font-medium text-dark mt-1 truncate">
+                      {item.productName}
+                    </h3>
+                    <p className="text-xs text-dark-muted font-medium mt-0.5">
+                      {item.color} • Size: {item.size}
+                    </p>
+                    <p className="text-[11px] text-dark-muted font-mono mt-0.5">
+                      Var: {item.variantId}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Update Stock Button */}
+                <div className="pt-2 border-t border-blush/40">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setItemToEdit(item);
+                      setNewQtyInput(item.stockQty);
+                    }}
+                    className="w-full rounded-full text-xs font-semibold text-dark border-blush/60 hover:bg-cream-light"
+                  >
+                    <Edit3 className="h-3.5 w-3.5 mr-1.5 text-gold" />
+                    <span>Update Stock</span>
+                  </Button>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div className="py-12 text-center text-dark-muted italic bg-white rounded-3xl border border-blush/60">
+            No variant inventory found matching search criteria.
+          </div>
+        )}
       </div>
 
       {/* Stock Update Modal */}

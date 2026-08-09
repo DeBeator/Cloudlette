@@ -9,7 +9,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Cloudlette — Fashion Storefront",
   description:
-    "Good clothes. Real style. Explore bags, shoes, and tops from Cloudlette.",
+    "Effortless elegance and everyday style. Explore bags, shoes, and tops from Cloudlette.",
 };
 
 export default function RootLayout({
