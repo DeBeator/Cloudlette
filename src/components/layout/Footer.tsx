@@ -29,7 +29,7 @@ export function Footer() {
               Cloudlette
             </h3>
             <p className="text-cream/70 text-xs sm:text-sm leading-relaxed font-light">
-              Effortless elegance and everyday style. Bags, shoes, tops — picked for women who know what they want.
+              We pick pieces we actually love. Bags, shoes, tops — for women who know what they want.
             </p>
             <div className="flex space-x-3 pt-2">
               <a

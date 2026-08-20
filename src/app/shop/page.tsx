@@ -9,6 +9,8 @@ import { FadeInSection } from "@/components/animations/FadeInSection";
 import { cn } from "@/lib/utils";
 import { SlidersHorizontal, X, RotateCcw } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 type FilterCategory = "all" | "bag" | "shoe" | "top" | "new-arrival" | "fast-selling";
 type SortOption = "newest" | "price-asc" | "price-desc";
 
@@ -31,15 +33,17 @@ const MOBILE_CATEGORY_TABS: { id: FilterCategory; label: string }[] = [
 function ShopContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
-  const searchQuery = searchParams.get("q");
+  const categoryParam = searchParams ? searchParams.get("category") : null;
+  const searchQuery = searchParams ? searchParams.get("q") : null;
 
+  // Initialize with "all" so products render immediately on server and client
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("all");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  // Sync category param from URL after client hydration
   useEffect(() => {
     if (categoryParam) {
       const match = MOBILE_CATEGORY_TABS.find((t) => t.id === categoryParam);
