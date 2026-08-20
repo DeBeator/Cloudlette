@@ -12,25 +12,19 @@ export function NewArrivalsSection() {
   ).slice(0, 4);
 
   return (
-    <section className="py-16 sm:py-24 bg-cream/40 border-t border-blush/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeInSection className="space-y-2 mb-10 text-left">
-          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-gold-hover block">
-            JUST LANDED
-          </span>
-          <div className="relative inline-block">
-            <h2 className="font-heading text-3xl sm:text-4xl font-normal text-dark pb-2">
-              New Arrivals
-            </h2>
-            {/* Thin short gold decorative underline accent */}
-            <span className="absolute bottom-0 left-0 w-16 h-0.5 bg-gold rounded-full" />
-          </div>
+    <section className="py-16 sm:py-24 bg-cream/40 border-t border-blush/30 w-full">
+      <div className="w-full px-4 sm:px-8 lg:px-16">
+        {/* Section Heading: Left-Aligned, Playfair Display Large. No Eyebrow. */}
+        <FadeInSection className="mb-10 text-left">
+          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-dark">
+            New Arrivals
+          </h2>
         </FadeInSection>
 
         <FadeInSection>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {newArrivals.map((product) => (
-              <ProductCard key={product.id} product={product} badge="New" badgeType="new" />
+              <ProductCard key={product.id} product={product} badge="NEW" badgeType="new" />
             ))}
           </div>
         </FadeInSection>

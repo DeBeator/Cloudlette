@@ -16,7 +16,7 @@ import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { FadeInSection } from "@/components/animations/FadeInSection";
-import { ShoppingBag, ArrowLeft, AlertTriangle, Heart, Share2 } from "lucide-react";
+import { ShoppingBag, ArrowLeft, AlertTriangle, Heart, Share2, Truck } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -114,7 +114,6 @@ export default function ProductDetailPage({
         color: selectedVariant.color,
         quantity: 1,
       },
-      // Open drawer on desktop only (screen width >= 768px)
       { openDrawer: typeof window !== "undefined" && window.innerWidth >= 768 }
     );
 
@@ -127,7 +126,6 @@ export default function ProductDetailPage({
   };
 
   // "You May Also Like" products (same category excluding current product)
-  // TODO: replace with GET /api/products?category=...&exclude=id
   const relatedProducts = useMemo(() => {
     if (!product) return [];
     return MOCK_PRODUCTS.filter(
@@ -135,13 +133,12 @@ export default function ProductDetailPage({
     ).slice(0, 4);
   }, [product]);
 
-  // Clean 404 state if product not found
   if (!product) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <div className="w-full px-4 sm:px-8 lg:px-16 py-20 text-center">
         <div className="max-w-md mx-auto space-y-4">
           <AlertTriangle className="h-12 w-12 text-gold mx-auto" />
-          <h1 className="font-heading text-3xl font-normal text-dark">Product Not Found</h1>
+          <h1 className="font-heading text-3xl font-bold text-dark">Product Not Found</h1>
           <p className="text-dark-muted text-sm font-light">
             The requested product could not be located in our catalog.
           </p>
@@ -159,9 +156,9 @@ export default function ProductDetailPage({
   const activeImage = product.images[selectedImageIndex] || product.images[0];
 
   return (
-    <FadeInSection className="space-y-0">
-      {/* Product Detail Main Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+    <FadeInSection className="space-y-0 w-full">
+      {/* Product Detail Main Section — Full width two-column layout */}
+      <div className="w-full px-4 sm:px-8 lg:px-16 py-8 sm:py-14">
         {/* Back Link */}
         <div className="mb-6">
           <Link
@@ -173,12 +170,13 @@ export default function ProductDetailPage({
           </Link>
         </div>
 
-        {/* 2-Column Desktop / 1-Column Mobile Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-          {/* Left Column: Image Gallery */}
+        {/* Full-width 2-Column Split: Left 55% / Right 45% */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          {/* Left Column (55% / col-span-7): Image Gallery */}
           <div className="lg:col-span-7 space-y-4">
+            {/* Main Image (Tall portrait aspect-[3/4]) */}
             {/* TODO: replace with real product photography from client */}
-            <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-cream-light border border-blush/60 shadow-md">
+            <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-cream-light border border-blush/60 shadow-sm">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeImage}
@@ -200,7 +198,7 @@ export default function ProductDetailPage({
               </AnimatePresence>
             </div>
 
-            {/* Thumbnail Row (Hidden if only 1 image exists) */}
+            {/* Thumbnail Row Below (Horizontal scroll, small squares) */}
             {product.images.length > 1 && (
               <div className="flex space-x-3 overflow-x-auto pb-2 no-scrollbar">
                 {product.images.map((imgUrl, idx) => {
@@ -209,7 +207,7 @@ export default function ProductDetailPage({
                     <button
                       key={idx}
                       onClick={() => setSelectedImageIndex(idx)}
-                      className={`relative w-20 aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
+                      className={`relative w-16 sm:w-20 aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
                         isSelected
                           ? "border-gold ring-2 ring-gold/30 opacity-100"
                           : "border-blush/60 hover:border-gold/50 opacity-70 hover:opacity-100"
@@ -228,41 +226,41 @@ export default function ProductDetailPage({
             )}
           </div>
 
-          {/* Right Column: Product Meta & Variant Selection */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+          {/* Right Column (45% / col-span-5): Product Info, pl-12 on desktop */}
+          <div className="lg:col-span-5 pl-0 lg:pl-12 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
-              {/* Category Eyebrow */}
-              <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-gold-hover block">
+              {/* Category Tag (Gold, uppercase, small) */}
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold block">
                 {product.category}
               </span>
 
               {/* Product Title */}
-              <h1 className="font-heading text-3xl sm:text-4xl font-normal text-dark tracking-tight leading-tight">
+              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-dark tracking-tight leading-tight">
                 {product.name}
               </h1>
 
               {/* Price */}
-              <p className="font-bold text-2xl text-gold-hover">
+              <p className="text-dark font-semibold text-2xl sm:text-3xl">
                 {formatPrice(product.price)}
               </p>
+
+              {/* Thin Gold Divider */}
+              <div className="h-[1px] bg-gold/40 my-4" />
 
               {/* Description Paragraph */}
               <p className="text-dark-muted text-sm sm:text-base font-light leading-relaxed">
                 {product.description}
               </p>
-
-              {/* Blush Divider Line */}
-              <div className="h-[1px] bg-blush/60 my-4" />
             </div>
 
             {/* Variant Selectors */}
-            <div className="space-y-6">
-              {/* Color Selector (Filled Circle Swatches with Gold Ring) */}
+            <div className="space-y-6 pt-2">
+              {/* Color Swatches */}
               {availableColors.length > 0 && (
                 <div className="space-y-2.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-dark block">
+                  <label className="text-xs font-bold uppercase tracking-wider text-dark block">
                     Color:{" "}
-                    <span className="text-gold-hover font-bold">
+                    <span className="text-gold-hover font-semibold">
                       {selectedColor || "Select a color"}
                     </span>
                   </label>
@@ -289,12 +287,12 @@ export default function ProductDetailPage({
                 </div>
               )}
 
-              {/* Size Selector (Hidden for Bags) */}
+              {/* Size Pills */}
               {hasSizes && allProductSizes.length > 0 && (
                 <div className="space-y-2.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-dark block">
+                  <label className="text-xs font-bold uppercase tracking-wider text-dark block">
                     Size:{" "}
-                    <span className="text-gold-hover font-bold">
+                    <span className="text-gold-hover font-semibold">
                       {selectedSize || "Select size"}
                     </span>
                   </label>
@@ -314,7 +312,7 @@ export default function ProductDetailPage({
                           key={size}
                           onClick={() => setSelectedSize(size)}
                           disabled={isSizeOutOfStock}
-                          className={`min-w-[44px] h-9 px-3 rounded-full text-xs font-bold uppercase tracking-wider border transition-all ${
+                          className={`min-w-[44px] h-9 px-3 text-xs font-bold uppercase tracking-wider border transition-all ${
                             isSelected
                               ? "bg-gold text-dark border-gold font-bold shadow-xs"
                               : isSizeOutOfStock
@@ -330,7 +328,7 @@ export default function ProductDetailPage({
                 </div>
               )}
 
-              {/* Stock Status Line with Dot */}
+              {/* Stock Status Line */}
               <div className="flex items-center space-x-2 pt-1">
                 <span
                   className={`w-2.5 h-2.5 rounded-full inline-block ${
@@ -342,67 +340,67 @@ export default function ProductDetailPage({
                 </span>
               </div>
 
-              {/* Full-width Gold Pill Add to Cart CTA */}
+              {/* Full-width Solid Dark Add to Cart CTA (Gold on hover — NOT gold pill) */}
               <div className="pt-2">
-                <Button
+                <button
+                  type="button"
                   onClick={handleAddToCart}
                   disabled={isOutOfStock || isSelectionMissing}
-                  size="lg"
-                  className="w-full rounded-full bg-gold hover:bg-gold-hover text-dark font-semibold text-sm py-4 shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-dark text-cream hover:bg-gold hover:text-dark transition-all duration-300 font-semibold text-sm uppercase tracking-wider py-4 shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
-                  <ShoppingBag className="h-4 w-4 mr-2 stroke-[2]" />
-                  {isSelectionMissing
-                    ? "Select options"
-                    : isOutOfStock
-                    ? "Out of Stock"
-                    : "Add to Cart"}
-                </Button>
+                  <ShoppingBag className="h-4 w-4 stroke-[2]" />
+                  <span>
+                    {isSelectionMissing
+                      ? "Select options"
+                      : isOutOfStock
+                      ? "Out of Stock"
+                      : "Add to Cart"}
+                  </span>
+                </button>
               </div>
 
-              {/* Wishlist & Share Row */}
+              {/* Save to Wishlist & Share Stubs */}
               <div className="flex items-center space-x-6 pt-2 text-xs font-medium text-dark-muted">
                 <button
                   type="button"
-                  className="hover:text-gold transition-colors inline-flex items-center space-x-1"
+                  className="hover:text-gold transition-colors inline-flex items-center space-x-1.5"
                   onClick={() => showToast("Saved to Wishlist", `${product.name} has been saved.`)}
                 >
-                  <Heart className="h-3.5 w-3.5 stroke-[1.5]" />
+                  <Heart className="h-4 w-4 stroke-[1.5]" />
                   <span>Save to Wishlist</span>
                 </button>
                 <button
                   type="button"
-                  className="hover:text-gold transition-colors inline-flex items-center space-x-1"
+                  className="hover:text-gold transition-colors inline-flex items-center space-x-1.5"
                   onClick={() => showToast("Link Copied", "Product link copied to clipboard.")}
                 >
-                  <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
+                  <Share2 className="h-4 w-4 stroke-[1.5]" />
                   <span>Share</span>
                 </button>
+              </div>
+
+              {/* Shipping Info Strip Below Button */}
+              <div className="flex items-center space-x-2 text-xs text-dark-muted bg-cream/40 p-3 rounded-lg border border-blush/30 pt-3">
+                <Truck className="h-4 w-4 text-gold flex-shrink-0" />
+                <span>Free delivery in Lagos · Nationwide shipping available</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Below the Fold: "You May Also Like" Recommendations */}
-      {/* TODO: replace with GET /api/products?category=...&exclude=id */}
+      {/* "You May Also Like" section below — full width, 4-column grid */}
       {relatedProducts.length > 0 && (
-        <section className="py-16 sm:py-24 bg-cream/50 border-t border-blush/40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <FadeInSection className="space-y-2 mb-10 text-left">
-              <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-gold-hover block">
-                RECOMMENDED FOR YOU
-              </span>
-              <div className="relative inline-block">
-                <h2 className="font-heading text-3xl sm:text-4xl font-normal text-dark pb-2">
-                  You May Also Like
-                </h2>
-                {/* Short decorative gold underline */}
-                <span className="absolute bottom-0 left-0 w-16 h-0.5 bg-gold rounded-full" />
-              </div>
+        <section className="py-16 sm:py-24 bg-cream/50 border-t border-blush/40 w-full">
+          <div className="w-full px-4 sm:px-8 lg:px-16">
+            <FadeInSection className="mb-10 text-left">
+              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-dark">
+                You May Also Like
+              </h2>
             </FadeInSection>
 
             <FadeInSection>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {relatedProducts.map((relProd) => (
                   <ProductCard key={relProd.id} product={relProd} />
                 ))}

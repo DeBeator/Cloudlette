@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { FeatureGrid } from "@/components/home/FeatureGrid";
 import { FeaturedCategories } from "@/components/home/FeaturedCategories";
 import { NewArrivalsSection } from "@/components/home/NewArrivalsSection";
 import { FastSellingSection } from "@/components/home/FastSellingSection";
@@ -13,70 +10,103 @@ import { FastSellingSection } from "@/components/home/FastSellingSection";
 export default function HomePage() {
   const shouldReduceMotion = useReducedMotion();
 
+  const marqueeText =
+    "FREE NATIONWIDE DELIVERY · BAGS · SHOES · TOPS · NEW ARRIVALS WEEKLY · EASY RETURNS · SHOP NOW →";
+
   return (
-    <div className="space-y-0">
-      {/* Full-Bleed Single Image Hero Section */}
-      {/* TODO: replace with full-bleed client photography — this is the hero centrepiece */}
-      <section className="relative w-full min-h-[75vh] lg:min-h-[85vh] flex items-center overflow-hidden bg-dark">
-        {/* Background Image */}
-        <Image
-          src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=2000&q=80"
-          alt="Cloudlette Editorial Presentation"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+    <div className="space-y-0 w-full overflow-x-hidden">
+      {/* 2. Hero Section — Full-width, split layout (left 55% / right 45% desktop, single col mobile) */}
+      <section className="w-full min-h-[85vh] lg:min-h-[calc(100vh-110px)] grid grid-cols-1 lg:grid-cols-12 bg-dark">
+        {/* Left Panel (55% / col-span-7 on desktop) */}
+        <div className="lg:col-span-7 bg-dark text-cream px-6 sm:px-12 lg:px-16 py-14 sm:py-20 lg:py-28 flex flex-col justify-center order-2 lg:order-1">
+          <div className="max-w-2xl space-y-6">
+            {/* Small Eyebrow */}
+            <motion.span
+              initial={shouldReduceMotion ? {} : { opacity: 0, y: 15 }}
+              animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-gold block"
+            >
+              NEW COLLECTION
+            </motion.span>
 
-        {/* Subtle dark gradient overlay (left to right) for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-dark/85 via-dark/45 to-transparent z-10" />
-
-        {/* Overlaid Text Content */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 lg:py-28">
-          <div className="max-w-xl space-y-6 text-left">
-            {/* Headline */}
+            {/* Large Bold Headline */}
             <motion.h1
               initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
               animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-normal text-cream-light leading-tight tracking-tight"
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="font-heading text-5xl sm:text-6xl lg:text-8xl font-bold text-cream leading-[0.95] tracking-tight"
             >
               Good clothes for real life.
             </motion.h1>
 
-            {/* Pill CTA: Understated outline style, small size */}
+            {/* Short Line */}
+            <motion.p
+              initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
+              animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-cream/60 text-sm sm:text-base font-light tracking-wide pt-1"
+            >
+              Bags. Shoes. Tops.
+            </motion.p>
+
+            {/* Two CTAs Side-by-Side */}
             <motion.div
               initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
               animate={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="pt-2"
+              transition={{ duration: 0.6, delay: 0.45 }}
+              className="flex flex-wrap items-center gap-4 pt-4"
             >
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="rounded-full px-6 py-2.5 text-xs font-medium tracking-wider uppercase border-cream-light/40 text-cream-light bg-transparent hover:bg-white/10 hover:border-cream-light transition-all duration-300 group shadow-none"
+              {/* Shop Now — Solid Gold Pill */}
+              <Link
+                href="/shop"
+                className="rounded-full bg-gold hover:bg-gold-hover text-dark px-8 py-3.5 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-300 shadow-md inline-flex items-center justify-center text-center"
               >
-                <Link href="/shop" className="inline-flex items-center space-x-2">
-                  <span>Shop Collection</span>
-                  <ArrowRight className="h-3.5 w-3.5 ml-1 transition-transform duration-200 group-hover:translate-x-1" strokeWidth={1} />
-                </Link>
-              </Button>
+                Shop Now
+              </Link>
+
+              {/* View Lookbook — Outline Cream Pill */}
+              <Link
+                href="/shop"
+                className="rounded-full border border-cream text-cream hover:bg-cream/10 px-8 py-3.5 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all duration-300 inline-flex items-center justify-center text-center"
+              >
+                View Lookbook
+              </Link>
             </motion.div>
           </div>
         </div>
+
+        {/* Right Panel (45% / col-span-5 on desktop) */}
+        <div className="lg:col-span-5 h-[40vh] lg:h-auto relative overflow-hidden order-1 lg:order-2">
+          {/* TODO: replace with client hero photography */}
+          <Image
+            src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=2000&q=80"
+            alt="Cloudlette Hero"
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 45vw"
+            className="object-cover object-center w-full h-full"
+          />
+        </div>
       </section>
 
-      {/* Feature Grid */}
-      <FeatureGrid />
+      {/* 3. Marquee / Ticker Strip */}
+      <div className="w-full bg-dark text-cream py-3 border-y border-white/10 overflow-hidden relative select-none">
+        <div className="flex w-max animate-marquee space-x-8 text-xs sm:text-sm font-semibold uppercase tracking-[0.25em]">
+          <span className="shrink-0">{marqueeText}</span>
+          <span className="shrink-0">{marqueeText}</span>
+          <span className="shrink-0">{marqueeText}</span>
+          <span className="shrink-0">{marqueeText}</span>
+        </div>
+      </div>
 
-      {/* Featured Categories (Bags, Shoes, Tops) */}
+      {/* 4. Featured Categories (Bags, Shoes, Tops) */}
       <FeaturedCategories />
 
-      {/* New Arrivals Section */}
+      {/* 5. New Arrivals Section */}
       <NewArrivalsSection />
 
-      {/* Fast Selling Section */}
+      {/* 5. Fast Selling Section */}
       <FastSellingSection />
     </div>
   );
