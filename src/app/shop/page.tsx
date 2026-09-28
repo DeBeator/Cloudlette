@@ -30,11 +30,14 @@ const MOBILE_CATEGORY_TABS: { id: FilterCategory; label: string }[] = [
   { id: "fast-selling", label: "FAST SELLING" },
 ];
 
-function ShopContent() {
+function ShopContent({
+  categoryParam,
+  searchQuery,
+}: {
+  categoryParam: string | null;
+  searchQuery: string | null;
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const categoryParam = searchParams ? searchParams.get("category") : null;
-  const searchQuery = searchParams ? searchParams.get("q") : null;
 
   // Initialize with "all" so products render immediately on server and client
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("all");
@@ -420,16 +423,18 @@ function ShopContent() {
   );
 }
 
+/** Thin wrapper that reads search params and passes them as props to ShopContent. */
+function ShopSearchParamsReader() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams ? searchParams.get("category") : null;
+  const searchQuery = searchParams ? searchParams.get("q") : null;
+  return <ShopContent categoryParam={categoryParam} searchQuery={searchQuery} />;
+}
+
 export default function ShopPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="w-full px-8 py-20 text-center text-dark-muted font-light">
-          Loading collection...
-        </div>
-      }
-    >
-      <ShopContent />
+    <Suspense fallback={<></>}>
+      <ShopSearchParamsReader />
     </Suspense>
   );
 }

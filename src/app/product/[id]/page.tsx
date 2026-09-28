@@ -165,7 +165,7 @@ export default function ProductDetailPage({
   return (
     <div className="space-y-0 w-full">
       {/* Product Detail Main Section — Full width two-column layout */}
-      <FadeInSection className="w-full px-4 sm:px-8 lg:px-16 py-8 sm:py-14">
+      <FadeInSection className="w-full px-4 sm:px-8 lg:px-16 py-6 sm:py-10 lg:py-8">
         {/* Back Link */}
         <div className="mb-6">
           <Link
@@ -178,12 +178,12 @@ export default function ProductDetailPage({
         </div>
 
         {/* Full-width 2-Column Split: Left wider image column / Right info column */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start lg:max-h-[calc(100vh-10rem)] lg:overflow-hidden">
           {/* Left Column (col-span-7 on lg, col-span-8 on xl): Image Gallery */}
-          <div className="lg:col-span-7 xl:col-span-8 space-y-4">
-            {/* Main Image (Tall portrait aspect-[3/4]) */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-4 flex flex-col">
+            {/* Main Image — capped at 80vh to stay within viewport, preserving tall portrait feel */}
             {/* TODO: replace with real product photography from client */}
-            <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-cream-light border border-blush/60 shadow-sm">
+            <div className="relative w-full max-h-[80vh] min-h-[320px] rounded-2xl overflow-hidden bg-cream-light border border-blush/60 shadow-sm" style={{ aspectRatio: '3/4', maxHeight: '80vh' }}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeImage}
@@ -199,7 +199,7 @@ export default function ProductDetailPage({
                     fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 65vw"
-                    className="object-cover object-center"
+                    className="object-cover object-top"
                   />
                 </motion.div>
               </AnimatePresence>
@@ -234,7 +234,7 @@ export default function ProductDetailPage({
           </div>
 
           {/* Right Column (col-span-5 on lg, col-span-4 on xl): Product Info */}
-          <div className="lg:col-span-5 xl:col-span-4 pl-0 lg:pl-4 flex flex-col justify-between space-y-6">
+          <div className="lg:col-span-5 xl:col-span-4 pl-0 lg:pl-4 flex flex-col justify-between space-y-6 lg:overflow-y-auto lg:max-h-[calc(100vh-10rem)] no-scrollbar">
             <div className="space-y-4">
               {/* Category Tag (Gold, uppercase, small) */}
               <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold block">

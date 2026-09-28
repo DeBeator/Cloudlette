@@ -151,7 +151,7 @@ export function Header() {
   ];
 
   return (
-    <header className="w-full relative z-50">
+    <header className="w-full">
       {/* Row 1 (top bar) — slim, dark background (bg-dark), cream text, py-2 px-8 */}
       <div className="bg-dark text-cream py-2 px-4 sm:px-8 flex items-center justify-between text-xs tracking-wider font-light border-b border-white/5">
         <div className="flex items-center space-x-2 truncate">
@@ -181,7 +181,7 @@ export function Header() {
       </div>
 
       {/* Sticky Navigation Container (Row 2 + Row 3) */}
-      <div className="sticky top-0 z-40 bg-cream border-b border-gold/30 shadow-xs">
+      <div className="sticky top-0 z-50 bg-cream border-b border-gold/30 shadow-xs">
         {/* Row 2 (main nav) — cream background, py-4 px-8 lg:px-16 */}
         <div className="py-4 px-4 sm:px-8 lg:px-16 flex items-center justify-between gap-4">
           {/* Mobile menu button */}
@@ -367,7 +367,7 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden fixed inset-x-0 top-[110px] z-40 bg-cream border-b border-gold/40 px-6 pt-4 pb-6 space-y-4 shadow-xl"
+            className="md:hidden fixed inset-x-0 top-[64px] z-40 bg-cream border-b border-gold/40 px-6 pt-4 pb-6 space-y-4 shadow-xl"
           >
             {navLinks.map((link) => {
               const isActive = pathname === link.href;

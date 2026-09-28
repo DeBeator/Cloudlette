@@ -7,9 +7,9 @@ import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cloudlette — Fashion Storefront",
+  title: "Cloudlette — Bags, Shoes & Tops",
   description:
-    "Effortless elegance and everyday style. Explore bags, shoes, and tops from Cloudlette.",
+    "Good clothes for real life. Bags, shoes, and tops for women who know what they want — shop Cloudlette.",
 };
 
 export default function RootLayout({
