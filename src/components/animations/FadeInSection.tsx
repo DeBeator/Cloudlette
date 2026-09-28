@@ -26,7 +26,7 @@ export function FadeInSection({
     <motion.div
       initial={{ opacity: 0, y: yOffset }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
+      viewport={{ once: true, amount: 0.05 }}
       transition={{
         duration: 0.6,
         ease: [0.215, 0.61, 0.355, 1.0], // smooth cubic-bezier

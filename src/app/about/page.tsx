@@ -6,7 +6,7 @@ export default function AboutPage() {
   return (
     <div className="space-y-16 lg:space-y-24 pb-20">
       {/* Hero Section — Full width, cream background, centered */}
-      <section className="bg-cream-light border-b border-blush/40 py-20 lg:py-28 text-center px-4 sm:px-6 lg:px-8">
+      <section className="bg-cream-light border-b border-blush/40 py-20 lg:py-28 text-center px-4 sm:px-8 lg:px-16">
         <FadeInSection className="max-w-3xl mx-auto space-y-4">
           <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-gold-hover block">
             OUR STORY
@@ -20,7 +20,7 @@ export default function AboutPage() {
         </FadeInSection>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 lg:space-y-28">
+      <div className="w-full px-4 sm:px-8 lg:px-16 space-y-20 lg:space-y-28">
         {/* Brand Story Section — 2 column desktop, single mobile */}
         <section>
           <FadeInSection>

@@ -125,12 +125,19 @@ export default function ProductDetailPage({
     );
   };
 
-  // "You May Also Like" products (same category excluding current product)
+  // "You May Also Like" products (same category excluding current product, fallback to other items if needed)
   const relatedProducts = useMemo(() => {
     if (!product) return [];
-    return MOCK_PRODUCTS.filter(
+    const sameCategory = MOCK_PRODUCTS.filter(
       (p) => p.category === product.category && p.id !== product.id
-    ).slice(0, 4);
+    );
+    if (sameCategory.length >= 4) {
+      return sameCategory.slice(0, 4);
+    }
+    const otherProducts = MOCK_PRODUCTS.filter(
+      (p) => p.id !== product.id && !sameCategory.some((sc) => sc.id === p.id)
+    );
+    return [...sameCategory, ...otherProducts].slice(0, 4);
   }, [product]);
 
   if (!product) {
@@ -156,9 +163,9 @@ export default function ProductDetailPage({
   const activeImage = product.images[selectedImageIndex] || product.images[0];
 
   return (
-    <FadeInSection className="space-y-0 w-full">
+    <div className="space-y-0 w-full">
       {/* Product Detail Main Section — Full width two-column layout */}
-      <div className="w-full px-4 sm:px-8 lg:px-16 py-8 sm:py-14">
+      <FadeInSection className="w-full px-4 sm:px-8 lg:px-16 py-8 sm:py-14">
         {/* Back Link */}
         <div className="mb-6">
           <Link
@@ -170,10 +177,10 @@ export default function ProductDetailPage({
           </Link>
         </div>
 
-        {/* Full-width 2-Column Split: Left 55% / Right 45% */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-          {/* Left Column (55% / col-span-7): Image Gallery */}
-          <div className="lg:col-span-7 space-y-4">
+        {/* Full-width 2-Column Split: Left wider image column / Right info column */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Left Column (col-span-7 on lg, col-span-8 on xl): Image Gallery */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-4">
             {/* Main Image (Tall portrait aspect-[3/4]) */}
             {/* TODO: replace with real product photography from client */}
             <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-cream-light border border-blush/60 shadow-sm">
@@ -191,7 +198,7 @@ export default function ProductDetailPage({
                     alt={product.name}
                     fill
                     priority
-                    sizes="(max-width: 1024px) 100vw, 55vw"
+                    sizes="(max-width: 1024px) 100vw, 65vw"
                     className="object-cover object-center"
                   />
                 </motion.div>
@@ -226,8 +233,8 @@ export default function ProductDetailPage({
             )}
           </div>
 
-          {/* Right Column (45% / col-span-5): Product Info, pl-12 on desktop */}
-          <div className="lg:col-span-5 pl-0 lg:pl-12 flex flex-col justify-between space-y-6">
+          {/* Right Column (col-span-5 on lg, col-span-4 on xl): Product Info */}
+          <div className="lg:col-span-5 xl:col-span-4 pl-0 lg:pl-4 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               {/* Category Tag (Gold, uppercase, small) */}
               <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold block">
@@ -387,7 +394,7 @@ export default function ProductDetailPage({
             </div>
           </div>
         </div>
-      </div>
+      </FadeInSection>
 
       {/* "You May Also Like" section below — full width, 4-column grid */}
       {relatedProducts.length > 0 && (
@@ -409,6 +416,6 @@ export default function ProductDetailPage({
           </div>
         </section>
       )}
-    </FadeInSection>
+    </div>
   );
 }
