@@ -4,8 +4,8 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { useRequireAdmin } from "@/lib/useRequireAdmin";
 import { getMockOrders, formatDate } from "@/lib/mock-orders";
-import { useStockStore } from "@/lib/mock-stock";
-import { formatPrice } from "@/lib/mock-data";
+import { MOCK_PRODUCTS } from "@/lib/mock-data";
+import { formatPrice } from "@/lib/format";
 import { StatusBadge } from "@/components/account/StatusBadge";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { Button } from "@/components/ui/button";
@@ -26,14 +26,35 @@ export default function AdminOverviewPage() {
   // useRequireAdmin(); // TODO: uncomment when backend auth is live
 
   const recentOrders = getMockOrders().slice(0, 5);
-  const stockItems = useStockStore((state) => state.items);
 
-  // Synchronized low stock items list (stockQty <= 3)
+  // Synchronized low stock items list derived directly from product variants (stockQty <= 3)
   const lowStockVariants = useMemo(() => {
-    return stockItems
-      .filter((item) => item.stockQty <= 3)
-      .sort((a, b) => a.stockQty - b.stockQty);
-  }, [stockItems]);
+    const list: {
+      variantId: string;
+      productName: string;
+      category: string;
+      color: string;
+      size: string;
+      stockQty: number;
+    }[] = [];
+
+    MOCK_PRODUCTS.forEach((product) => {
+      product.variants.forEach((v) => {
+        if (v.stockQty <= 3) {
+          list.push({
+            variantId: v.id,
+            productName: product.name,
+            category: product.category,
+            color: v.color,
+            size: v.size || (product.category === "bag" ? "N/A" : "Standard"),
+            stockQty: v.stockQty,
+          });
+        }
+      });
+    });
+
+    return list.sort((a, b) => a.stockQty - b.stockQty);
+  }, []);
 
   return (
     <FadeInSection className="space-y-8">

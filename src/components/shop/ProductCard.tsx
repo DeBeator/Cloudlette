@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { formatPrice, Product } from "@/lib/mock-data";
+import { formatPrice } from "@/lib/format";
+import { Product } from "@/lib/mock-data";
 import { useCartStore } from "@/store/useCartStore";
 import { useToast } from "@/components/ui/toast";
 import { ShoppingBag, Plus } from "lucide-react";
@@ -44,7 +45,7 @@ export function ProductCard({ product, badge }: ProductCardProps) {
   return (
     <div className="group flex flex-col bg-cream/30 rounded-xl overflow-hidden border border-blush/40 shadow-xs hover:shadow-lg transition-all duration-300 h-full relative">
       {/* Image Container — Tall portrait aspect ratio aspect-[3/4] */}
-      <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] w-full bg-cream-light overflow-hidden">
+      <Link href={`/product/${product.slug}`} className="block relative aspect-[3/4] w-full bg-cream-light overflow-hidden">
         {/* Product Image */}
         {/* TODO: replace with real product photography from client */}
         <Image
@@ -88,7 +89,7 @@ export function ProductCard({ product, badge }: ProductCardProps) {
 
       {/* Info Section Below Image */}
       <div className="p-4 flex flex-col flex-grow justify-between space-y-2">
-        <Link href={`/product/${product.id}`} className="space-y-1 block">
+        <Link href={`/product/${product.slug}`} className="space-y-1 block">
           {/* Category Tag */}
           <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold block">
             {product.category}

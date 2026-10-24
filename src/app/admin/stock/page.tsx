@@ -3,7 +3,8 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { useRequireAdmin } from "@/lib/useRequireAdmin";
-import { useStockStore, getStockStatusInfo, StockItem } from "@/lib/mock-stock";
+import { MOCK_PRODUCTS } from "@/lib/mock-data";
+import { getStockStatusInfo, StockItem } from "@/lib/mock-stock";
 import { useToast } from "@/components/ui/toast";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { Button } from "@/components/ui/button";
@@ -14,11 +15,40 @@ export const dynamic = "force-dynamic";
 
 // TODO: PUT /api/products/variants/:id/stock
 
+function buildStockRows(): StockItem[] {
+  const rows: StockItem[] = [];
+  MOCK_PRODUCTS.forEach((product) => {
+    product.variants.forEach((v) => {
+      rows.push({
+        variantId: v.id,
+        productId: product.id,
+        productName: product.name,
+        category: product.category,
+        color: v.color,
+        size: v.size || (product.category === "bag" ? "N/A" : "Standard"),
+        image: product.images[0],
+        stockQty: v.stockQty,
+      });
+    });
+  });
+  return rows;
+}
+
 export default function AdminStockPage() {
   // useRequireAdmin(); // TODO: uncomment when backend auth is live
 
   const { showToast } = useToast();
-  const { items, updateStockQty } = useStockStore();
+  const [items, setItems] = useState<StockItem[]>(() => buildStockRows());
+
+  const updateStockQty = (variantId: string, newQty: number) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.variantId === variantId
+          ? { ...item, stockQty: Math.max(0, newQty) }
+          : item
+      )
+    );
+  };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");

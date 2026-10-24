@@ -56,7 +56,7 @@ export default function EditProductPage({
         id: v.id || `var-${i}`,
         color: v.color,
         size: v.size || "",
-        stockQty: v.stock_qty ?? v.stockQty ?? 5,
+        stockQty: v.stockQty ?? 5,
       }));
       setVariants(mapped);
     }
