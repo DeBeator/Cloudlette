@@ -3,13 +3,14 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useProduct } from "@/hooks/useProduct";
 import { useProducts } from "@/hooks/useProducts";
 import { formatPrice } from "@/lib/format";
 import { getColorHex } from "@/lib/mock-data";
 import type { Product, ProductVariant } from "@/types";
 import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
 import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/shop/ProductCard";
@@ -20,12 +21,13 @@ import {
   ArrowLeft,
   AlertTriangle,
   Heart,
-  Share2,
   Truck,
   Minus,
   Plus,
   Ruler,
   ChevronDown,
+  RotateCcw,
+  ShieldCheck,
 } from "lucide-react";
 
 interface ProductDetailClientProps {
@@ -36,20 +38,23 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
   const { data: product, loading, error } = useProduct(slug);
   const { data: allProducts } = useProducts();
   const addItemToCart = useCartStore((state) => state.addItem);
+  const toggleWishlist = useWishlistStore((state) => state.toggleItem);
+  const isInWishlist = useWishlistStore((state) => state.isInWishlist);
   const { showToast } = useToast();
-  const shouldReduceMotion = useReducedMotion();
 
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
-  // Accordion state
-  const [openAccordion, setOpenAccordion] = useState<string | null>("material");
+  // Accordion state: "details" | "composition" | "fit" | null
+  const [openAccordion, setOpenAccordion] = useState<string | null>("details");
 
   // Recently viewed products
   const [recentlyViewedProducts, setRecentlyViewedProducts] = useState<Product[]>([]);
+
+  // Wishlist state for current product
+  const isWishlisted = product ? isInWishlist(product.id) : false;
 
   // Available unique colors for product
   const availableColors = useMemo(() => {
@@ -80,7 +85,6 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
       setSelectedColor(firstInStock.color);
       setSelectedSize(firstInStock.size);
       setQuantity(1);
-      setSelectedImageIndex(0);
     }
   }, [product]);
 
@@ -156,7 +160,7 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
         name: product.name,
         category: product.category,
         price: product.price,
-        image: product.images[selectedImageIndex] || product.images[0],
+        image: product.images[0],
         size: selectedVariant.size,
         color: selectedVariant.color,
         quantity: quantity,
@@ -192,21 +196,20 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
     return (
       <div className="w-full px-4 sm:px-8 lg:px-16 py-8">
         <div className="h-4 w-28 bg-blush/40 rounded animate-pulse mb-6" />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-          <div className="lg:col-span-7 xl:col-span-8 space-y-4">
-            <div className="w-full aspect-[3/4] max-h-[80vh] rounded-2xl bg-cream-light/80 animate-pulse border border-blush/40" />
-            <div className="flex space-x-3">
-              <div className="w-20 aspect-square rounded-lg bg-cream-light/80 animate-pulse" />
-              <div className="w-20 aspect-square rounded-lg bg-cream-light/80 animate-pulse" />
-              <div className="w-20 aspect-square rounded-lg bg-cream-light/80 animate-pulse" />
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          <div className="lg:col-span-7 xl:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="w-full aspect-square rounded-2xl bg-cream-light/80 animate-pulse border border-blush/40" />
+            <div className="w-full aspect-square rounded-2xl bg-cream-light/80 animate-pulse border border-blush/40" />
+            <div className="w-full aspect-square rounded-2xl bg-cream-light/80 animate-pulse border border-blush/40" />
+            <div className="w-full aspect-square rounded-2xl bg-cream-light/80 animate-pulse border border-blush/40" />
           </div>
-          <div className="lg:col-span-5 xl:col-span-4 space-y-6">
-            <div className="h-4 w-20 bg-blush/40 rounded animate-pulse" />
+          <div className="lg:col-span-5 xl:col-span-5 space-y-6">
+            <div className="h-4 w-32 bg-blush/40 rounded animate-pulse" />
             <div className="h-10 w-3/4 bg-blush/50 rounded animate-pulse" />
+            <div className="h-14 w-full bg-blush/30 rounded animate-pulse" />
             <div className="h-8 w-1/3 bg-blush/60 rounded animate-pulse" />
-            <div className="h-20 w-full bg-blush/30 rounded animate-pulse" />
-            <div className="h-12 w-full bg-blush/40 rounded animate-pulse" />
+            <div className="h-16 w-full bg-blush/40 rounded animate-pulse" />
+            <div className="h-12 w-full bg-blush/50 rounded animate-pulse" />
           </div>
         </div>
       </div>
@@ -233,7 +236,6 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
     );
   }
 
-  const activeImage = product.images[selectedImageIndex] || product.images[0];
   const hasDiscount = Boolean(product.compareAtPrice && product.compareAtPrice > product.price);
   const discountPercent = hasDiscount
     ? Math.round((((product.compareAtPrice || 0) - product.price) / (product.compareAtPrice || 1)) * 100)
@@ -270,7 +272,7 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
       />
 
       {/* Product Detail Main Section */}
-      <FadeInSection className="w-full px-4 sm:px-8 lg:px-16 py-6 sm:py-10 lg:py-8">
+      <FadeInSection className="w-full px-4 sm:px-8 lg:px-16 py-6 sm:py-10">
         {/* Back Link */}
         <div className="mb-6">
           <Link
@@ -282,409 +284,408 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
           </Link>
         </div>
 
-        {/* 2-Column Split */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start lg:max-h-[calc(100vh-10rem)] lg:overflow-hidden">
-          {/* Left Column: Image Gallery */}
-          <div className="lg:col-span-7 xl:col-span-8 space-y-4 flex flex-col">
-            <div
-              className="relative w-full max-h-[80vh] min-h-[320px] rounded-2xl overflow-hidden bg-cream-light border border-blush/60 shadow-sm"
-              style={{ aspectRatio: "3/4", maxHeight: "80vh" }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeImage}
-                  initial={shouldReduceMotion ? {} : { opacity: 0 }}
-                  animate={shouldReduceMotion ? {} : { opacity: 1 }}
-                  exit={shouldReduceMotion ? {} : { opacity: 0 }}
-                  transition={{ duration: 0.35, ease: "easeInOut" }}
-                  className="absolute inset-0"
+        {/* 2-Column Split: Image Grid Left, Product Info Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left Column: 2-Column Image Grid (Stacked, 1 col on mobile) */}
+          <div className="lg:col-span-7 xl:col-span-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {product.images.map((imgUrl, idx) => (
+                <div
+                  key={idx}
+                  className="relative aspect-square w-full rounded-2xl overflow-hidden bg-cream-light border border-blush/50 shadow-xs"
                 >
                   <Image
-                    src={activeImage}
-                    alt={product.name}
+                    src={imgUrl}
+                    alt={`${product.name} view ${idx + 1}`}
                     fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 65vw"
-                    className="object-cover object-top"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 32vw"
+                    priority={idx < 2}
+                    className="object-cover object-center w-full h-full"
                   />
-                </motion.div>
-              </AnimatePresence>
 
-              {/* Sale badge on main image if compareAtPrice exists */}
-              {hasDiscount && (
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="bg-rose-600 text-cream text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
-                    Save {discountPercent}%
-                  </span>
+                  {/* Sale badge on first image if discount exists */}
+                  {idx === 0 && hasDiscount && (
+                    <div className="absolute top-3.5 left-3.5 z-10">
+                      <span className="bg-rose-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                        Save {discountPercent}%
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
-
-            {/* Thumbnail Row Below */}
-            {product.images.length > 1 && (
-              <div className="flex space-x-3 overflow-x-auto pb-2 no-scrollbar pt-2">
-                {product.images.map((imgUrl, idx) => {
-                  const isSelected = selectedImageIndex === idx;
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setSelectedImageIndex(idx)}
-                      className={`relative h-20 min-h-20 w-20 aspect-square object-cover rounded-md overflow-hidden border-2 transition-all flex-shrink-0 ${
-                        isSelected
-                          ? "border-gold ring-2 ring-gold/30 opacity-100"
-                          : "border-blush/60 hover:border-gold/50 opacity-70 hover:opacity-100"
-                      }`}
-                    >
-                      <Image
-                        src={imgUrl}
-                        alt={`${product.name} thumbnail ${idx + 1}`}
-                        width={80}
-                        height={80}
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            )}
           </div>
 
           {/* Right Column: Product Info & Actions */}
-          <div className="lg:col-span-5 xl:col-span-4 pl-0 lg:pl-4 flex flex-col justify-between space-y-6 lg:overflow-y-auto lg:max-h-[calc(100vh-10rem)] no-scrollbar">
-            <div className="space-y-4">
-              {/* Category Tag */}
-              <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold block">
-                {product.category}
-              </span>
-
-              {/* Product Title */}
-              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-dark tracking-tight leading-tight">
-                {product.name}
-              </h1>
-
-              {/* Price row with compareAtPrice strikethrough & discount pill */}
-              <div className="flex items-baseline space-x-3 flex-wrap gap-y-1">
-                <p className="text-dark font-semibold text-2xl sm:text-3xl">
-                  {formatPrice(product.price)}
-                </p>
-                {hasDiscount && (
-                  <>
-                    <p className="text-dark/40 line-through text-lg sm:text-xl font-normal">
-                      {formatPrice(product.compareAtPrice!)}
-                    </p>
-                    <span className="bg-rose-100 text-rose-700 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                      Save {discountPercent}%
-                    </span>
-                  </>
-                )}
-              </div>
-
-              {/* Thin Gold Divider */}
-              <div className="h-[1px] bg-gold/40 my-4" />
-
-              {/* Description Paragraph */}
-              <p className="text-dark-muted text-sm sm:text-base font-light leading-relaxed">
-                {product.description}
-              </p>
-            </div>
-
-            {/* Variant Selectors */}
-            <div className="space-y-6 pt-2">
-              {/* Color Swatches */}
-              {availableColors.length > 0 && (
-                <div className="space-y-2.5">
-                  <label className="text-xs font-bold uppercase tracking-wider text-dark block">
-                    Color:{" "}
-                    <span className="text-gold-hover font-semibold">
-                      {selectedColor || "Select a color"}
-                    </span>
-                  </label>
-                  <div className="flex items-center space-x-3">
-                    {availableColors.map((colorName) => {
-                      const isSelected = selectedColor === colorName;
-                      const hex = getColorHex(colorName);
-
-                      return (
-                        <button
-                          key={colorName}
-                          onClick={() => handleColorSelect(colorName)}
-                          className={`w-7 h-7 rounded-full border border-black/10 transition-all ${
-                            isSelected
-                              ? "ring-2 ring-gold ring-offset-2 scale-110"
-                              : "hover:scale-105 opacity-80 hover:opacity-100"
-                          }`}
-                          style={{ backgroundColor: hex }}
-                          title={colorName}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Size Pills + Size Guide Trigger */}
-              {hasSizes && allProductSizes.length > 0 && (
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold uppercase tracking-wider text-dark block">
-                      Size:{" "}
-                      <span className="text-gold-hover font-semibold">
-                        {selectedSize || "Select size"}
-                      </span>
-                    </label>
-
-                    {/* Size Guide link/button for shoes & tops */}
-                    <button
-                      type="button"
-                      onClick={() => setIsSizeGuideOpen(true)}
-                      className="inline-flex items-center space-x-1 text-xs font-semibold text-gold hover:text-gold-hover transition-colors underline-offset-4 hover:underline"
-                    >
-                      <Ruler className="w-3.5 h-3.5" />
-                      <span>Size Guide</span>
-                    </button>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {allProductSizes.map((size) => {
-                      const isSelected = selectedSize === size;
-                      const matchingVar = product.variants.find(
-                        (v) => v.color === selectedColor && v.size === size
-                      );
-                      const sizeStock = matchingVar ? (matchingVar.stockQty ?? 0) : 0;
-                      const isSizeOutOfStock = !matchingVar || sizeStock <= 0;
-
-                      return (
-                        <button
-                          key={size}
-                          onClick={() => setSelectedSize(size)}
-                          disabled={isSizeOutOfStock}
-                          className={`min-w-[44px] h-9 px-3 text-xs font-bold uppercase tracking-wider border transition-all ${
-                            isSelected
-                              ? "bg-gold text-dark border-gold font-bold shadow-xs"
-                              : isSizeOutOfStock
-                              ? "bg-cream-light text-dark-muted/40 border-blush/40 cursor-not-allowed opacity-40"
-                              : "bg-white text-dark border-blush hover:border-gold"
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Stock Status Line & "Only X left" warning */}
-              <div className="space-y-2 pt-1">
-                <div className="flex items-center space-x-2">
+          <div className="lg:col-span-5 xl:col-span-5 space-y-6 lg:sticky lg:top-28">
+            {/* 1. Stock status + reviews count line */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 text-xs font-medium">
+                <span className="flex items-center space-x-1.5">
                   <span
-                    className={`w-2.5 h-2.5 rounded-full inline-block ${
+                    className={`w-2 h-2 rounded-full inline-block ${
                       isOutOfStock ? "bg-rose-500" : "bg-emerald-500"
                     }`}
                   />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-dark">
+                  <span
+                    className={`font-semibold uppercase tracking-wider ${
+                      isOutOfStock ? "text-rose-600" : "text-emerald-700"
+                    }`}
+                  >
                     {isOutOfStock ? "Out of Stock" : "In Stock"}
                   </span>
-                </div>
-
-                {/* "Only X left" warning when stockQty <= 3 */}
-                {!isOutOfStock && selectedStockQty <= 3 && (
-                  <div className="flex items-center space-x-2 text-amber-800 text-xs font-semibold bg-amber-50/90 border border-amber-300 px-3 py-1.5 rounded-lg shadow-xs">
-                    <AlertTriangle className="h-3.5 w-3.5 text-amber-600 flex-shrink-0" />
-                    <span>Only {selectedStockQty} left in stock — order soon</span>
-                  </div>
-                )}
+                </span>
+                <span className="text-dark-muted/60">·</span>
+                <span className="flex items-center space-x-1 text-dark-muted">
+                  <span className="text-amber-500">★</span>
+                  <span className="font-semibold text-dark">4.8</span>
+                  <span>(24 reviews)</span>
+                </span>
               </div>
 
-              {/* Quantity Selector (− 1 +) above Add to Cart, capped at available stock */}
-              {!isOutOfStock && (
-                <div className="space-y-2 pt-1">
+              {/* "Only X left" warning when stockQty <= 3 */}
+              {!isOutOfStock && selectedStockQty <= 3 && (
+                <div className="flex items-center space-x-2 text-amber-800 text-xs font-semibold bg-amber-50/90 border border-amber-300 px-3 py-1.5 rounded-lg shadow-xs">
+                  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 flex-shrink-0" />
+                  <span>Only {selectedStockQty} left in stock — order soon</span>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Product Name — large, Playfair Display */}
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-dark tracking-tight leading-tight">
+              {product.name}
+            </h1>
+
+            {/* 3. Short Description */}
+            <p className="text-dark-muted text-sm sm:text-base font-light leading-relaxed">
+              {product.shortDescription || product.description}
+            </p>
+
+            {/* 4. Price Row: discount badge in red pill + current price + strikethrough compareAtPrice */}
+            <div className="flex items-center space-x-3 flex-wrap gap-y-1">
+              {hasDiscount && (
+                <span className="bg-rose-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                  {discountPercent}% OFF
+                </span>
+              )}
+              <p className="text-dark font-semibold text-2xl sm:text-3xl">
+                {formatPrice(product.price)}
+              </p>
+              {hasDiscount && (
+                <p className="text-dark/40 line-through text-lg sm:text-xl font-normal">
+                  {formatPrice(product.compareAtPrice!)}
+                </p>
+              )}
+            </div>
+
+            {/* Thin Divider */}
+            <div className="h-[1px] bg-blush/40" />
+
+            {/* 5. Size Selector */}
+            {hasSizes && allProductSizes.length > 0 && (
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
                   <label className="text-xs font-bold uppercase tracking-wider text-dark block">
-                    Quantity
-                  </label>
-                  <div className="inline-flex items-center rounded-lg border border-blush/60 bg-white shadow-xs overflow-hidden">
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                      disabled={quantity <= 1}
-                      className="w-10 h-10 flex items-center justify-center text-dark/70 hover:text-dark hover:bg-cream transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="w-12 text-center text-sm font-semibold text-dark">
-                      {quantity}
+                    Size:{" "}
+                    <span className="text-gold font-semibold">
+                      {selectedSize || "Select size"}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((prev) => Math.min(selectedStockQty, prev + 1))}
-                      disabled={quantity >= selectedStockQty}
-                      className="w-10 h-10 flex items-center justify-center text-dark/70 hover:text-dark hover:bg-cream transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                      aria-label="Increase quantity"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                  </label>
+
+                  {/* Size Guide link */}
+                  <button
+                    type="button"
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="inline-flex items-center space-x-1 text-xs font-semibold text-dark-muted hover:text-gold transition-colors underline-offset-4 hover:underline"
+                  >
+                    <Ruler className="w-3.5 h-3.5" />
+                    <span>Size guide</span>
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {allProductSizes.map((size) => {
+                    const isSelected = selectedSize === size;
+                    const matchingVar = product.variants.find(
+                      (v) => v.color === selectedColor && v.size === size
+                    );
+                    const sizeStock = matchingVar ? (matchingVar.stockQty ?? 0) : 0;
+                    const isSizeOutOfStock = !matchingVar || sizeStock <= 0;
+
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        disabled={isSizeOutOfStock}
+                        className={`min-w-[44px] h-9 px-3 text-xs font-bold uppercase tracking-wider border rounded-md transition-all ${
+                          isSelected
+                            ? "bg-gold text-dark border-gold font-bold shadow-xs"
+                            : isSizeOutOfStock
+                            ? "bg-cream-light text-dark-muted/40 border-blush/40 cursor-not-allowed opacity-40"
+                            : "bg-white text-dark border-blush hover:border-gold"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 6. Color Selector */}
+            {availableColors.length > 0 && (
+              <div className="space-y-2.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-dark block">
+                  Color:{" "}
+                  <span className="text-gold font-semibold">
+                    {selectedColor || "Select a color"}
+                  </span>
+                </label>
+                <div className="flex items-center space-x-3">
+                  {availableColors.map((colorName) => {
+                    const isSelected = selectedColor === colorName;
+                    const hex = getColorHex(colorName);
+
+                    return (
+                      <button
+                        key={colorName}
+                        onClick={() => handleColorSelect(colorName)}
+                        className={`w-8 h-8 rounded-full border border-black/10 transition-all ${
+                          isSelected
+                            ? "ring-2 ring-gold ring-offset-2 scale-110"
+                            : "hover:scale-105 opacity-80 hover:opacity-100"
+                        }`}
+                        style={{ backgroundColor: hex }}
+                        title={colorName}
+                        aria-label={`Select color ${colorName}`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 7. Quantity Selector (− 1 +) + “ADD TO CART” side by side */}
+            <div className="flex items-center space-x-3 pt-2">
+              {!isOutOfStock && (
+                <div className="flex items-center rounded-xl border border-blush/70 bg-white shadow-xs overflow-hidden flex-shrink-0 h-12">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    disabled={quantity <= 1}
+                    className="w-10 h-full flex items-center justify-center text-dark/70 hover:text-dark hover:bg-cream transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="w-10 text-center text-sm font-semibold text-dark">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((prev) => Math.min(selectedStockQty, prev + 1))}
+                    disabled={quantity >= selectedStockQty}
+                    className="w-10 h-full flex items-center justify-center text-dark/70 hover:text-dark hover:bg-cream transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               )}
 
-              {/* Add to Cart CTA */}
-              <div className="pt-2">
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                disabled={isOutOfStock || isSelectionMissing}
+                className="flex-1 h-12 bg-dark text-cream hover:bg-gold hover:text-dark transition-all duration-300 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 rounded-xl"
+              >
+                <ShoppingBag className="h-4 w-4 stroke-[2]" />
+                <span>
+                  {isSelectionMissing
+                    ? "Select Options"
+                    : isOutOfStock
+                    ? "Out of Stock"
+                    : `Add to Cart — ${formatPrice(product.price * quantity)}`}
+                </span>
+              </button>
+            </div>
+
+            {/* 8. “Save to Wishlist” full-width outlined button */}
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  toggleWishlist(product.id);
+                  showToast(
+                    isWishlisted ? "Removed from Wishlist" : "Saved to Wishlist",
+                    `${product.name} has been ${isWishlisted ? "removed from" : "added to"} your wishlist.`
+                  );
+                }}
+                className={`w-full h-12 rounded-xl border font-bold text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 flex items-center justify-center space-x-2 ${
+                  isWishlisted
+                    ? "border-gold bg-gold/10 text-gold hover:bg-gold/20"
+                    : "border-dark/30 hover:border-dark bg-transparent text-dark hover:bg-cream/40"
+                }`}
+              >
+                <Heart
+                  className={`h-4 w-4 stroke-[2] ${
+                    isWishlisted ? "fill-gold text-gold" : "text-dark"
+                  }`}
+                />
+                <span>{isWishlisted ? "Saved to Wishlist" : "Save to Wishlist"}</span>
+              </button>
+            </div>
+
+            {/* 9. Trust Badges Row: 3 items side by side */}
+            <div className="grid grid-cols-3 gap-2 py-4 border-y border-blush/40">
+              <div className="flex flex-col items-center text-center space-y-1.5 p-2">
+                <Truck className="w-4 h-4 text-gold flex-shrink-0" />
+                <span className="text-[11px] font-semibold text-dark uppercase tracking-wider leading-tight">
+                  Free Lagos Delivery
+                </span>
+              </div>
+              <div className="flex flex-col items-center text-center space-y-1.5 p-2 border-x border-blush/30">
+                <RotateCcw className="w-4 h-4 text-gold flex-shrink-0" />
+                <span className="text-[11px] font-semibold text-dark uppercase tracking-wider leading-tight">
+                  Easy Returns
+                </span>
+              </div>
+              <div className="flex flex-col items-center text-center space-y-1.5 p-2">
+                <ShieldCheck className="w-4 h-4 text-gold flex-shrink-0" />
+                <span className="text-[11px] font-semibold text-dark uppercase tracking-wider leading-tight">
+                  Secure Payment
+                </span>
+              </div>
+            </div>
+
+            {/* 10. Accordions Below: Details | Composition & Care | How It Fits */}
+            <div className="divide-y divide-blush/40 pt-1">
+              {/* Details */}
+              <div className="py-3.5">
                 <button
                   type="button"
-                  onClick={handleAddToCart}
-                  disabled={isOutOfStock || isSelectionMissing}
-                  className="w-full bg-dark text-cream hover:bg-gold hover:text-dark transition-all duration-300 font-semibold text-sm uppercase tracking-wider py-4 shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 rounded-xl"
+                  onClick={() => setOpenAccordion(openAccordion === "details" ? null : "details")}
+                  className="w-full flex items-center justify-between text-left group"
                 >
-                  <ShoppingBag className="h-4 w-4 stroke-[2]" />
-                  <span>
-                    {isSelectionMissing
-                      ? "Select options"
-                      : isOutOfStock
-                      ? "Out of Stock"
-                      : `Add to Cart — ${formatPrice(product.price * quantity)}`}
+                  <span className="text-xs font-bold uppercase tracking-wider text-dark group-hover:text-gold transition-colors">
+                    Details
                   </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-dark/60 transition-transform duration-200 ${
+                      openAccordion === "details" ? "rotate-180 text-gold" : ""
+                    }`}
+                  />
                 </button>
+                <AnimatePresence>
+                  {openAccordion === "details" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-2.5 text-xs sm:text-sm text-dark-muted font-light leading-relaxed space-y-2">
+                        <p>{product.description}</p>
+                        {product.tags && product.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {product.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-cream border border-blush/60 text-dark-muted"
+                              >
+                                {tag.replace("-", " ")}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              {/* Collapsible Accordion Section: Material, Fit, Care Instructions */}
-              <div className="pt-4 divide-y divide-blush/40 border-t border-blush/40">
-                {/* Material & Details */}
-                <div className="py-3">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setOpenAccordion(openAccordion === "material" ? null : "material")
-                    }
-                    className="w-full flex items-center justify-between text-left group"
-                  >
-                    <span className="text-xs font-bold uppercase tracking-wider text-dark group-hover:text-gold transition-colors">
-                      Material & Details
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-dark/60 transition-transform duration-200 ${
-                        openAccordion === "material" ? "rotate-180 text-gold" : ""
-                      }`}
-                    />
-                  </button>
-                  <AnimatePresence>
-                    {openAccordion === "material" && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <p className="pt-2 text-xs sm:text-sm text-dark-muted font-light leading-relaxed">
-                          {product.material || "Crafted with premium high-grade materials and artisanal finishing."}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Fit & Sizing */}
-                <div className="py-3">
-                  <button
-                    type="button"
-                    onClick={() => setOpenAccordion(openAccordion === "fit" ? null : "fit")}
-                    className="w-full flex items-center justify-between text-left group"
-                  >
-                    <span className="text-xs font-bold uppercase tracking-wider text-dark group-hover:text-gold transition-colors">
-                      Fit & Sizing
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-dark/60 transition-transform duration-200 ${
-                        openAccordion === "fit" ? "rotate-180 text-gold" : ""
-                      }`}
-                    />
-                  </button>
-                  <AnimatePresence>
-                    {openAccordion === "fit" && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <p className="pt-2 text-xs sm:text-sm text-dark-muted font-light leading-relaxed">
-                          {product.fit ||
-                            (product.category === "bag"
-                              ? "One size structured bag with ample capacity for daily devices and cosmetics."
-                              : "Designed for a tailored, true-to-size silhouette. Check our Size Guide for exact body measurements.")}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                {/* Care Instructions */}
-                <div className="py-3">
-                  <button
-                    type="button"
-                    onClick={() => setOpenAccordion(openAccordion === "care" ? null : "care")}
-                    className="w-full flex items-center justify-between text-left group"
-                  >
-                    <span className="text-xs font-bold uppercase tracking-wider text-dark group-hover:text-gold transition-colors">
-                      Care Instructions
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-dark/60 transition-transform duration-200 ${
-                        openAccordion === "care" ? "rotate-180 text-gold" : ""
-                      }`}
-                    />
-                  </button>
-                  <AnimatePresence>
-                    {openAccordion === "care" && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <p className="pt-2 text-xs sm:text-sm text-dark-muted font-light leading-relaxed">
+              {/* Composition & Care */}
+              <div className="py-3.5">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setOpenAccordion(openAccordion === "composition" ? null : "composition")
+                  }
+                  className="w-full flex items-center justify-between text-left group"
+                >
+                  <span className="text-xs font-bold uppercase tracking-wider text-dark group-hover:text-gold transition-colors">
+                    Composition & Care
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-dark/60 transition-transform duration-200 ${
+                      openAccordion === "composition" ? "rotate-180 text-gold" : ""
+                    }`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {openAccordion === "composition" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-2.5 text-xs sm:text-sm text-dark-muted font-light leading-relaxed space-y-2">
+                        {product.material && (
+                          <p>
+                            <strong className="font-semibold text-dark">Material:</strong>{" "}
+                            {product.material}
+                          </p>
+                        )}
+                        <p>
+                          <strong className="font-semibold text-dark">Care:</strong>{" "}
                           {product.careInstructions ||
                             "Handle with gentle care. Store in protective dust bag when not in use."}
                         </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              {/* Save to Wishlist & Share Stubs */}
-              <div className="flex items-center space-x-6 pt-1 text-xs font-medium text-dark-muted">
+              {/* How It Fits */}
+              <div className="py-3.5">
                 <button
                   type="button"
-                  className="hover:text-gold transition-colors inline-flex items-center space-x-1.5"
-                  onClick={() => showToast("Saved to Wishlist", `${product.name} has been saved.`)}
+                  onClick={() => setOpenAccordion(openAccordion === "fit" ? null : "fit")}
+                  className="w-full flex items-center justify-between text-left group"
                 >
-                  <Heart className="h-4 w-4 stroke-[1.5]" />
-                  <span>Save to Wishlist</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-dark group-hover:text-gold transition-colors">
+                    How It Fits
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-dark/60 transition-transform duration-200 ${
+                      openAccordion === "fit" ? "rotate-180 text-gold" : ""
+                    }`}
+                  />
                 </button>
-                <button
-                  type="button"
-                  className="hover:text-gold transition-colors inline-flex items-center space-x-1.5"
-                  onClick={() => {
-                    if (typeof navigator !== "undefined" && navigator.clipboard) {
-                      navigator.clipboard.writeText(window.location.href);
-                    }
-                    showToast("Link Copied", "Product link copied to clipboard.");
-                  }}
-                >
-                  <Share2 className="h-4 w-4 stroke-[1.5]" />
-                  <span>Share</span>
-                </button>
-              </div>
-
-              {/* Shipping Info Strip Below Button */}
-              <div className="flex items-center space-x-2 text-xs text-dark-muted bg-cream/40 p-3 rounded-lg border border-blush/30">
-                <Truck className="h-4 w-4 text-gold flex-shrink-0" />
-                <span>Free delivery in Lagos · Nationwide shipping available</span>
+                <AnimatePresence>
+                  {openAccordion === "fit" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <p className="pt-2.5 text-xs sm:text-sm text-dark-muted font-light leading-relaxed">
+                        {product.fit ||
+                          (product.category === "bag"
+                            ? "One size structured silhouette with optimal internal compartments for devices and essentials."
+                            : "Designed for a refined, true-to-size tailored fit. Consult our Size Guide for comprehensive measurements.")}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>
