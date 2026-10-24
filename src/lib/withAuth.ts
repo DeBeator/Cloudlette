@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 
 /**
@@ -12,15 +12,14 @@ export function useRequireAuth() {
   const { isAuthenticated, isLoading, user } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      const queryString = searchParams?.toString();
-      const currentPath = queryString ? `${pathname}?${queryString}` : pathname;
+      const search = typeof window !== "undefined" ? window.location.search : "";
+      const currentPath = `${pathname}${search}`;
       router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
     }
-  }, [isAuthenticated, isLoading, pathname, searchParams, router]);
+  }, [isAuthenticated, isLoading, pathname, router]);
 
   return { isAuthenticated, isLoading, user };
 }

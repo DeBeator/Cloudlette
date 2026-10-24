@@ -13,8 +13,8 @@ export function Footer() {
   ];
 
   const customerCareLinks = [
-    { name: "FAQ", href: "/contact" },
-    { name: "Track Order", href: "/account" },
+    { name: "FAQ", href: "/faq" },
+    { name: "Track Order", href: "/track-order" },
     { name: "Contact Us", href: "/contact" },
   ];
 

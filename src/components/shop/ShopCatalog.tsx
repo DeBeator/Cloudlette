@@ -8,8 +8,8 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductCardSkeleton } from "@/components/shop/ProductCardSkeleton";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { getColorHex } from "@/lib/mock-data";
+import { SlidersHorizontal, X, RotateCcw, Check, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SlidersHorizontal, X, RotateCcw, Check } from "lucide-react";
 import type { Product } from "@/types";
 
 type SortOption = "newest" | "best-selling" | "price-asc" | "price-desc";
@@ -19,6 +19,7 @@ interface ShopCatalogProps {
   forcedCategory?: "bag" | "shoe" | "top";
   title?: string;
   description?: string;
+  showSearchInput?: boolean;
 }
 
 const CATEGORIES = [
@@ -34,6 +35,7 @@ export function ShopCatalog({
   forcedCategory,
   title = "Shop Collection",
   description,
+  showSearchInput = false,
 }: ShopCatalogProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -54,6 +56,7 @@ export function ShopCatalog({
   // Local state for inputs to allow smooth typing
   const [minPriceInput, setMinPriceInput] = useState(minPriceParam);
   const [maxPriceInput, setMaxPriceInput] = useState(maxPriceParam);
+  const [searchInputVal, setSearchInputVal] = useState(queryParam);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   // Sync inputs if URL params change externally
@@ -64,6 +67,15 @@ export function ShopCatalog({
   useEffect(() => {
     setMaxPriceInput(maxPriceParam);
   }, [maxPriceParam]);
+
+  useEffect(() => {
+    setSearchInputVal(queryParam);
+  }, [queryParam]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateParams({ q: searchInputVal.trim() || null });
+  };
 
   // Helper to update query params
   const updateParams = useCallback(
@@ -139,6 +151,8 @@ export function ShopCatalog({
           p.name.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q) ||
+          (p.material && p.material.toLowerCase().includes(q)) ||
+          p.tags.some((t) => t.toLowerCase().includes(q)) ||
           p.variants.some((v) => v.color.toLowerCase().includes(q))
       );
     }
@@ -210,22 +224,78 @@ export function ShopCatalog({
       sizeParam ||
       minPriceParam ||
       maxPriceParam ||
-      availabilityParam !== "all"
+      availabilityParam !== "all" ||
+      queryParam
   );
 
   return (
     <div className="w-full px-4 sm:px-8 lg:px-16 py-8 sm:py-14">
       {/* Header Title Section */}
-      <div className="text-left space-y-2 mb-8 border-b border-blush/40 pb-6">
-        <h1 className="font-heading text-4xl sm:text-5xl font-bold text-dark">
-          {title}
-        </h1>
-        {description && (
-          <p className="text-xs sm:text-sm text-dark-muted font-light max-w-2xl leading-relaxed">
-            {description}
-          </p>
+      <div className="text-left space-y-4 mb-8 border-b border-blush/40 pb-6">
+        <div>
+          <h1 className="font-heading text-4xl sm:text-5xl font-bold text-dark">
+            {title}
+          </h1>
+          {description && (
+            <p className="text-xs sm:text-sm text-dark-muted font-light max-w-2xl leading-relaxed mt-1">
+              {description}
+            </p>
+          )}
+        </div>
+
+        {showSearchInput && (
+          <div className="pt-2 max-w-xl">
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white rounded-full border border-blush/80 shadow-xs focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/20 transition-all overflow-hidden p-1.5">
+              <Search className="w-4 h-4 text-dark-muted ml-3 flex-shrink-0" />
+              <input
+                type="text"
+                placeholder="Search bags, heels, mules, silk tops..."
+                value={searchInputVal}
+                onChange={(e) => setSearchInputVal(e.target.value)}
+                className="w-full py-2 px-3 bg-transparent text-sm text-dark placeholder:text-dark-muted/60 outline-none"
+              />
+              {searchInputVal && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchInputVal("");
+                    updateParams({ q: null });
+                  }}
+                  className="p-1 rounded-full hover:bg-cream text-dark-muted hover:text-dark mr-1 transition-colors"
+                  aria-label="Clear search input"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-full bg-dark text-cream hover:bg-gold hover:text-dark text-xs font-semibold uppercase tracking-wider transition-colors flex-shrink-0 shadow-sm"
+              >
+                Search
+              </button>
+            </form>
+            <div className="flex items-center flex-wrap gap-2 pt-3">
+              <span className="text-[11px] font-semibold text-dark-muted uppercase tracking-wider mr-1">
+                Trending:
+              </span>
+              {["Leather Tote", "Silk Blouse", "Block Heels", "Emerald", "Satin"].map((term) => (
+                <button
+                  key={term}
+                  type="button"
+                  onClick={() => {
+                    setSearchInputVal(term);
+                    updateParams({ q: term });
+                  }}
+                  className="text-xs py-1 px-3 bg-cream/50 hover:bg-gold/20 border border-blush/50 rounded-full text-dark/80 hover:text-dark transition-colors"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
-        {queryParam && (
+
+        {queryParam && !showSearchInput && (
           <p className="text-xs sm:text-sm text-dark-muted font-light">
             Search results for &quot;<span className="font-semibold text-dark">{queryParam}</span>&quot;
           </p>
@@ -542,6 +612,110 @@ export function ShopCatalog({
               </select>
             </div>
           </div>
+
+          {/* Active Filter Chips */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-dark-muted mr-1">
+                Active:
+              </span>
+              {queryParam && (
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-cream text-dark text-xs border border-blush/60">
+                  <span>Search: &ldquo;{queryParam}&rdquo;</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchInputVal("");
+                      updateParams({ q: null });
+                    }}
+                    className="hover:text-gold"
+                    aria-label="Remove search filter"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+              {!forcedCategory && categoryParam !== "all" && (
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-cream text-dark text-xs border border-blush/60">
+                  <span className="capitalize">{categoryParam.replace("-", " ")}</span>
+                  <button
+                    type="button"
+                    onClick={() => updateParams({ category: null })}
+                    className="hover:text-gold"
+                    aria-label="Remove category filter"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+              {colorParam && (
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-cream text-dark text-xs border border-blush/60">
+                  <span>Color: {colorParam}</span>
+                  <button
+                    type="button"
+                    onClick={() => updateParams({ color: null })}
+                    className="hover:text-gold"
+                    aria-label="Remove color filter"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+              {sizeParam && (
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-cream text-dark text-xs border border-blush/60">
+                  <span>Size: {sizeParam}</span>
+                  <button
+                    type="button"
+                    onClick={() => updateParams({ size: null })}
+                    className="hover:text-gold"
+                    aria-label="Remove size filter"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+              {(minPriceParam || maxPriceParam) && (
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-cream text-dark text-xs border border-blush/60">
+                  <span>
+                    Price: {minPriceParam ? `₦${Number(minPriceParam).toLocaleString()}` : "₦0"} -{" "}
+                    {maxPriceParam ? `₦${Number(maxPriceParam).toLocaleString()}` : "Any"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMinPriceInput("");
+                      setMaxPriceInput("");
+                      updateParams({ minPrice: null, maxPrice: null });
+                    }}
+                    className="hover:text-gold"
+                    aria-label="Remove price filter"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+              {availabilityParam !== "all" && (
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-cream text-dark text-xs border border-blush/60">
+                  <span>{availabilityParam === "in-stock" ? "In Stock" : "Out of Stock"}</span>
+                  <button
+                    type="button"
+                    onClick={() => updateParams({ availability: null })}
+                    className="hover:text-gold"
+                    aria-label="Remove availability filter"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="text-xs font-semibold text-gold hover:underline ml-1"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
 
           {/* Product Grid or Skeletons */}
           {loading ? (

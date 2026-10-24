@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Package, User, LogOut } from "lucide-react";
+import { Package, User, LogOut, Heart, MapPin, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function AccountSidebar() {
@@ -27,7 +27,25 @@ export function AccountSidebar() {
       name: "My Orders",
       href: "/orders",
       icon: Package,
-      active: pathname.startsWith("/orders"),
+      active: pathname.startsWith("/orders") || pathname === "/account/orders",
+    },
+    {
+      name: "Wishlist",
+      href: "/account/wishlist",
+      icon: Heart,
+      active: pathname === "/account/wishlist",
+    },
+    {
+      name: "Saved Addresses",
+      href: "/account/addresses",
+      icon: MapPin,
+      active: pathname === "/account/addresses",
+    },
+    {
+      name: "Track Order",
+      href: "/track-order",
+      icon: Search,
+      active: pathname === "/track-order",
     },
     {
       name: "Account Details",
@@ -80,14 +98,14 @@ export function AccountSidebar() {
         </button>
       </div>
 
-      {/* Mobile Top Tabs (Visible on screens < 768px) */}
-      <div className="md:hidden flex rounded-2xl bg-white p-1.5 border border-blush/60 shadow-xs space-x-1">
+      {/* Mobile Top Tabs (Visible on screens < 768px, horizontal scrollable) */}
+      <div className="md:hidden overflow-x-auto no-scrollbar rounded-2xl bg-white p-1.5 border border-blush/60 shadow-xs flex space-x-1">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
-              "flex-1 text-center py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
+              "whitespace-nowrap flex-shrink-0 text-center py-2.5 px-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
               item.active
                 ? "bg-gold text-dark shadow-xs"
                 : "text-dark-muted hover:text-dark"
@@ -99,7 +117,7 @@ export function AccountSidebar() {
         <button
           type="button"
           onClick={handleLogout}
-          className="py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider text-rose-600 hover:bg-rose-50 transition-all"
+          className="whitespace-nowrap flex-shrink-0 py-2.5 px-3 rounded-xl text-xs font-bold uppercase tracking-wider text-rose-600 hover:bg-rose-50 transition-all"
         >
           Sign Out
         </button>

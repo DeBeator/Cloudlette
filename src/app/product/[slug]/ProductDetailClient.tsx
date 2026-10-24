@@ -322,14 +322,15 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
 
             {/* Thumbnail Row Below */}
             {product.images.length > 1 && (
-              <div className="flex space-x-3 overflow-x-auto pb-2 no-scrollbar">
+              <div className="flex space-x-3 overflow-x-auto pb-2 no-scrollbar pt-2">
                 {product.images.map((imgUrl, idx) => {
                   const isSelected = selectedImageIndex === idx;
                   return (
                     <button
                       key={idx}
+                      type="button"
                       onClick={() => setSelectedImageIndex(idx)}
-                      className={`relative w-16 sm:w-20 aspect-square rounded-lg overflow-hidden border-2 transition-all flex-shrink-0 ${
+                      className={`relative h-20 min-h-20 w-20 aspect-square object-cover rounded-md overflow-hidden border-2 transition-all flex-shrink-0 ${
                         isSelected
                           ? "border-gold ring-2 ring-gold/30 opacity-100"
                           : "border-blush/60 hover:border-gold/50 opacity-70 hover:opacity-100"
@@ -338,8 +339,9 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
                       <Image
                         src={imgUrl}
                         alt={`${product.name} thumbnail ${idx + 1}`}
-                        fill
-                        className="object-cover object-center"
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover object-center"
                       />
                     </button>
                   );

@@ -18,6 +18,14 @@ interface AddItemOptions {
   openDrawer?: boolean;
 }
 
+export interface ChangeVariantPayload {
+  variantId: string;
+  color: string;
+  size: string | null;
+  price?: number;
+  image?: string;
+}
+
 interface CartStore {
   items: CartItem[];
   isOpen: boolean;
@@ -27,6 +35,7 @@ interface CartStore {
   addItem: (item: Omit<CartItem, "id"> | CartItem, options?: AddItemOptions) => void;
   removeItem: (variantId: string) => void;
   updateQty: (variantId: string, quantity: number) => void;
+  changeVariant: (itemId: string, newVariant: ChangeVariantPayload) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -70,8 +79,6 @@ export const useCartStore = create<CartStore>()(
             updatedItems = [...state.items, formattedItem];
           }
 
-          // Auto-open drawer desktop check: if options.openDrawer is explicit, use it.
-          // Otherwise, auto-open only on desktop screens (>= 768px).
           const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
           const shouldOpen = options?.openDrawer ?? isDesktop;
 
@@ -97,6 +104,52 @@ export const useCartStore = create<CartStore>()(
                     : item
                 ),
         })),
+
+      changeVariant: (itemId, newVariant) =>
+        set((state) => {
+          const targetIndex = state.items.findIndex(
+            (item) => item.id === itemId || item.variantId === itemId
+          );
+          if (targetIndex === -1) return state;
+
+          const existingItem = state.items[targetIndex];
+          const newId = newVariant.variantId;
+
+          // Check if the target variant already exists in another cart item
+          const duplicateIndex = state.items.findIndex(
+            (item, idx) => idx !== targetIndex && (item.variantId === newId || item.id === newId)
+          );
+
+          if (duplicateIndex > -1) {
+            // Merge into duplicate item and remove existing item
+            const mergedItems = state.items
+              .map((item, idx) => {
+                if (idx === duplicateIndex) {
+                  return {
+                    ...item,
+                    quantity: item.quantity + existingItem.quantity,
+                  };
+                }
+                return item;
+              })
+              .filter((_, idx) => idx !== targetIndex);
+            return { items: mergedItems };
+          }
+
+          // Otherwise, update variant details in-place
+          const updatedItems = [...state.items];
+          updatedItems[targetIndex] = {
+            ...existingItem,
+            id: newId,
+            variantId: newId,
+            color: newVariant.color,
+            size: newVariant.size,
+            price: newVariant.price ?? existingItem.price,
+            image: newVariant.image ?? existingItem.image,
+          };
+
+          return { items: updatedItems };
+        }),
 
       clearCart: () => set({ items: [] }),
 

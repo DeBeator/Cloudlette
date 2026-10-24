@@ -41,8 +41,8 @@
     @apply border-border;
   }
   body {
-    @apply bg-cream text-dark antialiased font-sans min-h-screen selection:bg-gold selection:text-dark;
-    background-color: #F5EDDD;
+    @apply bg-off-white text-dark antialiased font-sans min-h-screen selection:bg-gold selection:text-dark;
+    background-color: #FDFCFA;
     color: #2B211A;
   }
   h1, h2, h3, h4, h5, h6 {

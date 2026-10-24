@@ -92,6 +92,7 @@ export function Header() {
   const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const openDrawer = useCartStore((state) => state.openDrawer);
   const getTotalItems = useCartStore((state) => state.getTotalItems);
@@ -121,6 +122,40 @@ export function Header() {
     if (searchOpen && searchInputRef.current) {
       searchInputRef.current.focus();
     }
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleScroll = () => {
+      if (window.scrollY > 10) setMobileMenuOpen(false);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const handleScroll = () => {
+      if (window.scrollY > 10) setSearchOpen(false);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [searchOpen]);
 
   const handleLogout = async () => {
@@ -237,7 +272,7 @@ export function Header() {
           {/* Right: search icon + user icon + cart icon with badge */}
           <div className="flex items-center space-x-4 sm:space-x-6">
             {/* Search Icon / Toggle */}
-            <div className="relative">
+            <div className="relative" ref={searchContainerRef}>
               <button
                 type="button"
                 onClick={() => setSearchOpen(!searchOpen)}
@@ -359,55 +394,114 @@ export function Header() {
         </Suspense>
       </div>
 
-      {/* Mobile menu dropdown */}
+      {/* Mobile menu drawer & overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden fixed inset-x-0 top-[64px] z-40 bg-cream border-b border-gold/40 px-6 pt-4 pb-6 space-y-4 shadow-xl"
-          >
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    "block py-2 text-sm uppercase tracking-[0.2em] transition-colors",
-                    isActive
-                      ? "text-gold font-bold"
-                      : "font-semibold text-dark hover:text-gold"
-                  )}
-                >
-                  {link.name}
-                </Link>
-              );
-            })}
-            {mounted && isAuthenticated ? (
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="block py-2 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600 hover:text-rose-700 transition-colors w-full text-left"
-              >
-                Sign Out
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  "block py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-colors",
-                  pathname === "/login" ? "text-gold font-medium" : "text-gold hover:text-gold-hover"
+          <div className="md:hidden">
+            {/* Dark backdrop overlay behind the menu */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/50 z-40"
+              aria-hidden="true"
+            />
+
+            {/* Menu panel itself: fixed top-0 left-0 h-full w-72 z-50 bg-cream */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 250 }}
+              className="fixed top-0 left-0 h-full w-72 z-50 bg-cream border-r border-gold/30 p-6 flex flex-col justify-between shadow-2xl overflow-y-auto"
+            >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between border-b border-blush/40 pb-4">
+                  <Link
+                    href="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="font-heading text-2xl font-bold tracking-tight text-dark hover:text-gold transition-colors"
+                  >
+                    Cloudlette
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-1.5 rounded-md text-dark hover:text-gold transition-colors"
+                    aria-label="Close Navigation Menu"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <nav className="space-y-3">
+                  {navLinks.map((link) => {
+                    const isActive = pathname === link.href;
+                    return (
+                      <Link
+                        key={link.name}
+                        href={link.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          "block py-2 text-sm uppercase tracking-[0.2em] transition-colors",
+                          isActive
+                            ? "text-gold font-bold"
+                            : "font-semibold text-dark hover:text-gold"
+                        )}
+                      >
+                        {link.name}
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+
+              <div className="pt-6 border-t border-blush/40 space-y-3">
+                {mounted && isAuthenticated ? (
+                  <>
+                    <div className="pb-1">
+                      <p className="text-xs font-semibold text-dark truncate">
+                        {user?.fullName || "Account"}
+                      </p>
+                      <p className="text-[11px] text-dark-muted truncate">
+                        {user?.email}
+                      </p>
+                    </div>
+                    <Link
+                      href="/account"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block py-2 text-xs font-semibold uppercase tracking-[0.2em] text-dark hover:text-gold transition-colors"
+                    >
+                      My Account & Orders
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="block py-2 text-xs font-semibold uppercase tracking-[0.2em] text-rose-600 hover:text-rose-700 transition-colors w-full text-left"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "block py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-colors",
+                      pathname === "/login" ? "text-gold font-medium" : "text-gold hover:text-gold-hover"
+                    )}
+                  >
+                    Sign In
+                  </Link>
                 )}
-              >
-                Sign In
-              </Link>
-            )}
-          </motion.div>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </header>

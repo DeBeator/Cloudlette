@@ -13,7 +13,7 @@ import { Package, ArrowRight, ShoppingBag } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export default function OrdersListPage() {
-  // useRequireAuth(); // TODO: uncomment when backend auth is live
+  useRequireAuth();
 
   // TODO: replace mock orders with GET /api/orders (authenticated)
   const orders = getMockOrders();

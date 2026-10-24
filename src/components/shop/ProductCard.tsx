@@ -5,8 +5,9 @@ import Image from "next/image";
 import { formatPrice } from "@/lib/format";
 import { Product } from "@/lib/mock-data";
 import { useCartStore } from "@/store/useCartStore";
+import { useWishlistStore } from "@/store/useWishlistStore";
 import { useToast } from "@/components/ui/toast";
-import { ShoppingBag, Plus } from "lucide-react";
+import { ShoppingBag, Plus, Heart } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
@@ -16,6 +17,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, badge }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem);
+  const isInWishlist = useWishlistStore((state) => state.isInWishlist(product.id));
+  const toggleWishlist = useWishlistStore((state) => state.toggleItem);
   const { showToast } = useToast();
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -40,6 +43,16 @@ export function ProductCard({ product, badge }: ProductCardProps) {
     showToast("Added to Cart!", `${product.name} added to your cart.`);
   };
 
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product.id);
+    showToast(
+      isInWishlist ? "Removed from Wishlist" : "Saved to Wishlist",
+      `${product.name} ${isInWishlist ? "removed from" : "added to"} your wishlist.`
+    );
+  };
+
   const isOutOfStock = product.variants.every((v) => v.stockQty <= 0);
 
   return (
@@ -55,6 +68,22 @@ export function ProductCard({ product, badge }: ProductCardProps) {
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
           className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
         />
+
+        {/* Heart Icon Top-Right (Wishlist toggle, no page navigation) */}
+        <button
+          type="button"
+          onClick={handleWishlistClick}
+          className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-dark/60 backdrop-blur-xs flex items-center justify-center transition-all hover:scale-110 shadow-sm"
+          aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <Heart
+            className={`w-4 h-4 transition-colors ${
+              isInWishlist
+                ? "fill-gold text-gold stroke-[2]"
+                : "text-cream fill-transparent stroke-[2] hover:text-gold"
+            }`}
+          />
+        </button>
 
         {/* Badge Top-Left — Small dark pill, cream text, no emojis */}
         {badge && !isOutOfStock && (

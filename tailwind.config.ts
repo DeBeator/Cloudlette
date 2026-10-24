@@ -15,10 +15,11 @@ const config: Config = {
     extend: {
       colors: {
         cream: {
-          DEFAULT: "#F5EDDD",
+          DEFAULT: "#FAF7F2",
           light: "#FAF6EE",
           dark: "#EBDDBF",
         },
+        "off-white": "#FDFCFA",
         dark: {
           DEFAULT: "#2B211A",
           light: "#3D3027",

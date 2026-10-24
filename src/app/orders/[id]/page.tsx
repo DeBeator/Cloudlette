@@ -103,7 +103,7 @@ export default function OrderDetailPage({
 }: {
   params: { id: string };
 }) {
-  // useRequireAuth(); // TODO: uncomment when backend auth is live
+  useRequireAuth();
 
   // TODO: replace mock data with GET /api/orders/:id
   const order = getMockOrderById(params.id);

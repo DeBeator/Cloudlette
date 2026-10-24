@@ -5,9 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
-import { useCartStore } from "@/store/useCartStore";
-import { formatPrice } from "@/lib/mock-data";
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, AlertTriangle } from "lucide-react";
+import { useCartStore, CartItem } from "@/store/useCartStore";
+import { formatPrice } from "@/lib/format";
+import { getProductById } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 
 export function CartDrawer() {
@@ -39,7 +40,7 @@ export function CartDrawer() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, closeDrawer]);
 
-  // Lock body scroll when drawer is open on mobile/desktop
+  // Lock body scroll when drawer is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -66,7 +67,7 @@ export function CartDrawer() {
     router.push("/shop");
   };
 
-  // Motion variants for Desktop (slide from right)
+  // Motion variants for Desktop
   const desktopDrawerVariants = {
     closed: {
       x: shouldReduceMotion ? 0 : "100%",
@@ -78,7 +79,7 @@ export function CartDrawer() {
     },
   };
 
-  // Motion variants for Mobile (slide up from bottom)
+  // Motion variants for Mobile
   const mobileDrawerVariants = {
     closed: {
       y: shouldReduceMotion ? 0 : "100%",
@@ -104,7 +105,7 @@ export function CartDrawer() {
             className="fixed inset-0 bg-dark/60 backdrop-blur-xs"
           />
 
-          {/* Desktop Slide-In Panel (hidden on mobile) */}
+          {/* Desktop Slide-In Panel */}
           <div className="hidden md:flex fixed inset-y-0 right-0 max-w-full justify-end">
             <motion.div
               variants={desktopDrawerVariants}
@@ -112,7 +113,7 @@ export function CartDrawer() {
               animate="open"
               exit="closed"
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className="w-[400px] h-full bg-cream shadow-2xl flex flex-col border-l border-blush/40 relative z-10"
+              className="w-[420px] h-full bg-cream shadow-2xl flex flex-col border-l border-blush/40 relative z-10"
             >
               <DrawerContent
                 totalItems={totalItems}
@@ -127,7 +128,7 @@ export function CartDrawer() {
             </motion.div>
           </div>
 
-          {/* Mobile Bottom Sheet (visible below md) */}
+          {/* Mobile Bottom Sheet */}
           <div className="flex md:hidden fixed inset-x-0 bottom-0 max-h-[85vh] justify-end">
             <motion.div
               variants={mobileDrawerVariants}
@@ -155,7 +156,124 @@ export function CartDrawer() {
   );
 }
 
-// Inner Drawer Content layout reused between mobile & desktop panels
+function CartItemRow({
+  item,
+  updateQty,
+  removeItem,
+}: {
+  item: CartItem;
+  updateQty: (id: string, qty: number) => void;
+  removeItem: (id: string) => void;
+}) {
+  // Stock validation against live product variant stock
+  const product = getProductById(item.productId);
+  const variant = product?.variants.find(
+    (v) => v.id === item.variantId || v.sku === item.variantId
+  );
+  const availableStock = variant ? variant.stockQty : 99;
+
+  // Cap quantity if exceeds stock
+  useEffect(() => {
+    if (availableStock >= 0 && item.quantity > availableStock) {
+      updateQty(item.id, Math.max(0, availableStock));
+    }
+  }, [availableStock, item.quantity, item.id, updateQty]);
+
+  const isLowOrCapped = availableStock > 0 && item.quantity >= availableStock;
+  const isOutOfStock = availableStock === 0;
+
+  return (
+    <div className="pt-4 first:pt-0 flex space-x-4 items-start">
+      {/* Square Product Image */}
+      <div className="relative w-20 aspect-square rounded-lg overflow-hidden bg-cream-light border border-blush/50 flex-shrink-0">
+        <Image
+          src={item.image}
+          alt={item.name}
+          fill
+          className="object-cover object-center"
+        />
+      </div>
+
+      {/* Details */}
+      <div className="flex-1 space-y-1">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-gold block">
+          {item.category}
+        </span>
+        <h4 className="font-heading text-sm font-semibold text-dark line-clamp-1">
+          {item.name}
+        </h4>
+
+        {/* Color and Size clearly displayed */}
+        <div className="flex items-center space-x-2 text-xs text-dark-muted font-light">
+          <span>
+            <strong className="font-medium text-dark">Color:</strong> {item.color}
+          </span>
+          {item.size && (
+            <>
+              <span>•</span>
+              <span>
+                <strong className="font-medium text-dark">Size:</strong> {item.size}
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Price */}
+        <p className="text-xs font-bold text-dark pt-0.5">
+          {formatPrice(item.price)}
+        </p>
+
+        {/* Stock Warning Badge */}
+        {isOutOfStock ? (
+          <p className="text-[11px] text-rose-600 font-semibold flex items-center space-x-1 pt-0.5">
+            <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+            <span>Out of stock</span>
+          </p>
+        ) : isLowOrCapped ? (
+          <p className="text-[11px] text-amber-700 font-medium flex items-center space-x-1 pt-0.5">
+            <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+            <span>Only {availableStock} available</span>
+          </p>
+        ) : null}
+
+        {/* Quantity Stepper + Trash */}
+        <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center border border-blush/70 rounded-lg bg-white h-7 px-1.5 space-x-2 shadow-xs">
+            <button
+              type="button"
+              onClick={() => updateQty(item.id, item.quantity - 1)}
+              className="text-dark hover:text-gold p-0.5 disabled:opacity-30"
+              aria-label="Decrease quantity"
+            >
+              <Minus className="h-3 w-3" />
+            </button>
+            <span className="text-xs font-semibold px-1">{item.quantity}</span>
+            <button
+              type="button"
+              onClick={() => updateQty(item.id, item.quantity + 1)}
+              disabled={isOutOfStock || item.quantity >= availableStock}
+              className="text-dark hover:text-gold p-0.5 disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="Increase quantity"
+            >
+              <Plus className="h-3 w-3" />
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => removeItem(item.id)}
+            className="text-dark-muted hover:text-red-600 transition-colors p-1"
+            title="Remove item"
+            aria-label="Remove item"
+          >
+            <Trash2 className="h-4 w-4 stroke-[1.5]" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DrawerContent({
   totalItems,
   items,
@@ -167,7 +285,7 @@ function DrawerContent({
   handleContinueShopping,
 }: {
   totalItems: number;
-  items: any[];
+  items: CartItem[];
   totalPrice: number;
   closeDrawer: () => void;
   removeItem: (id: string) => void;
@@ -219,60 +337,12 @@ function DrawerContent({
         ) : (
           <div className="space-y-4 divide-y divide-blush/30">
             {items.map((item) => (
-              <div key={item.id} className="pt-4 first:pt-0 flex space-x-4 items-start">
-                {/* Square Product Image */}
-                <div className="relative w-20 aspect-square rounded-lg overflow-hidden bg-cream-light border border-blush/50 flex-shrink-0">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover object-center"
-                  />
-                </div>
-
-                {/* Details */}
-                <div className="flex-1 space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gold-hover block">
-                    {item.category}
-                  </span>
-                  <h4 className="font-heading text-sm font-semibold text-dark line-clamp-1">
-                    {item.name}
-                  </h4>
-                  <p className="text-xs text-dark-muted font-light">
-                    {item.color} {item.size ? `• Size: ${item.size}` : ""}
-                  </p>
-                  <p className="text-xs font-bold text-dark pt-0.5">
-                    {formatPrice(item.price)}
-                  </p>
-
-                  {/* Quantity Stepper + Trash */}
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center border border-blush/70 rounded bg-white h-7 px-1.5 space-x-2">
-                      <button
-                        onClick={() => updateQty(item.id, item.quantity - 1)}
-                        className="text-dark hover:text-gold p-0.5"
-                      >
-                        <Minus className="h-3 w-3" />
-                      </button>
-                      <span className="text-xs font-semibold px-1">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQty(item.id, item.quantity + 1)}
-                        className="text-dark hover:text-gold p-0.5"
-                      >
-                        <Plus className="h-3 w-3" />
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="text-dark-muted hover:text-red-600 transition-colors p-1"
-                      title="Remove item"
-                    >
-                      <Trash2 className="h-4 w-4 stroke-[1.5]" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <CartItemRow
+                key={item.id}
+                item={item}
+                updateQty={updateQty}
+                removeItem={removeItem}
+              />
             ))}
           </div>
         )}

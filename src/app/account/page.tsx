@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 export const dynamic = "force-dynamic";
 
 export default function AccountPage() {
-  // useRequireAuth(); // TODO: uncomment when backend auth is live
+  useRequireAuth();
 
   const { user } = useAuthStore();
   const { showToast } = useToast();
