@@ -15,20 +15,20 @@ const config: Config = {
     extend: {
       colors: {
         cream: {
-          DEFAULT: "#FAF7F2",
+          DEFAULT: "#F5E6A3",
           light: "#FAF6EE",
           dark: "#EBDDBF",
         },
-        "off-white": "#FDFCFA",
+        "off-white": "#FDF8EC",
         dark: {
-          DEFAULT: "#2B211A",
-          light: "#3D3027",
-          muted: "#59493E",
+          DEFAULT: "#1A1A1A",
+          light: "#2E2E2E",
+          muted: "#5A5A5A",
         },
         gold: {
-          DEFAULT: "#D8A63E",
-          hover: "#C4932D",
-          light: "#E2BA63",
+          DEFAULT: "#C9A43A",
+          hover: "#B8963B",
+          light: "#D8B75B",
         },
         blush: {
           DEFAULT: "#D9C7A3",
@@ -70,7 +70,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        heading: ["var(--font-heading)", "Playfair Display", "Georgia", "serif"],
+        heading: ["var(--font-heading)", "sans-serif"],
         sans: ["var(--font-sans)", "Manrope", "system-ui", "sans-serif"],
       },
       borderRadius: {

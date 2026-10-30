@@ -5,7 +5,7 @@ import { ShopCatalog } from "@/components/shop/ShopCatalog";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Shop Collection | Cloudlette Luxury",
+  title: "Cloudlette",
   description:
     "Explore Cloudlette's handcrafted collection of luxury leather bags, artisanal heels, and premium tailored tops.",
 };
@@ -27,7 +27,7 @@ export default function ShopPage() {
         </div>
       }
     >
-      <ShopCatalog />
+      <ShopCatalog title="Cloudlette" />
     </Suspense>
   );
 }

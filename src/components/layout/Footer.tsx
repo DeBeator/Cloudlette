@@ -26,7 +26,7 @@ export function Footer() {
           {/* Col 1: Brand Logo + Tagline + Social Icons */}
           <div className="space-y-4">
             <h3 className="font-heading text-2xl font-bold tracking-tight text-white">
-              Cloudlette
+              Cloudlette ♡
             </h3>
             <p className="text-cream/70 text-xs sm:text-sm leading-relaxed font-light">
               We pick pieces we actually love. Bags, shoes, tops — for women who know what they want.

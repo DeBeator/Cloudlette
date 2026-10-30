@@ -632,7 +632,7 @@ function CheckoutForm() {
                 <p className="text-[11px] text-dark-muted font-light">
                   {deliveryType === "home"
                     ? selectedState.toLowerCase().includes("lagos")
-                      ? "Delivered within 24–48 hours across Lagos Island & Mainland."
+                      ? "Same-day doorstep delivery within Lagos (excluding Sundays)"
                       : "Delivered within 3–5 business days via verified national courier."
                     : "Ready for pickup within 24 hours at Victoria Island, Lagos."}
                 </p>

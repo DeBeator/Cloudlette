@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { fontHeading, fontSans } from "@/lib/fonts";
+import { baloo2, fontSans } from "@/lib/fonts";
 import { ToastProvider } from "@/components/ui/toast";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { AuthInitializer } from "@/components/layout/AuthInitializer";
@@ -9,7 +9,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Cloudlette — Bags, Shoes & Tops",
   description:
-    "Good clothes for real life. Bags, shoes, and tops for women who know what they want — shop Cloudlette.",
+    "Your daily dosage of chic. Bags, shoes, heels & cute tops — shop Cloudlette.",
 };
 
 export default function RootLayout({
@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fontHeading.variable} ${fontSans.variable}`}>
-      <body className="flex flex-col min-h-screen bg-cream text-dark antialiased font-sans">
+    <html lang="en" className={`${baloo2.variable} ${fontSans.variable}`}>
+      <body className="flex flex-col min-h-screen bg-off-white text-dark antialiased font-sans">
         <ToastProvider>
           <AuthInitializer />
           <ConditionalLayout>{children}</ConditionalLayout>

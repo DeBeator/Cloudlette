@@ -26,7 +26,7 @@ const FAQ_DATA: FAQItem[] = [
     topic: "Delivery",
     question: "What are your shipping rates?",
     answer:
-      "Standard Lagos delivery is ₦3,500. Nationwide interstate delivery to other Nigerian states is ₦5,000. In-store showroom pickup at our Victoria Island, Lagos lounge carries a ₦1,000 handling fee.",
+      "Standard Lagos Delivery: ₦2,000–₦7,000 depending on your location. Interstate Delivery: ₦5,000–₦7,000 depending on your destination. Pickup (Optional): Customers can pick up at Berger Park. A ₦1,000 handling fee is payable directly to the storekeeper. Delivery fees vary by location — confirm before completing your order.",
   },
   {
     id: "payments-1",
@@ -68,7 +68,7 @@ const FAQ_DATA: FAQItem[] = [
     topic: "International Delivery",
     question: "Do you ship internationally outside Nigeria?",
     answer:
-      "Yes, international shipping across West Africa, the UK, and North America is available upon special request via DHL Express. Please contact our concierge team directly on WhatsApp for international shipping quotes.",
+      "Yes, we ship to Ghana, Benin Republic, Cotonou, and Abidjan. Contact us on WhatsApp for international shipping quotes.",
   },
   {
     id: "contact-1",

@@ -33,7 +33,7 @@ const CATEGORIES = [
 
 export function ShopCatalog({
   forcedCategory,
-  title = "Shop Collection",
+  title = "Cloudlette",
   description,
   showSearchInput = false,
 }: ShopCatalogProps) {

@@ -48,7 +48,7 @@ function HeaderCategoryBar() {
               key={tab.name}
               href={tab.href}
               className={cn(
-                "text-xs font-semibold uppercase tracking-[0.18em] py-1 border-b-2 transition-all duration-200 whitespace-nowrap",
+                "font-heading text-xs font-semibold uppercase tracking-[0.18em] py-1 border-b-2 transition-all duration-200 whitespace-nowrap",
                 isActive
                   ? "border-gold text-dark font-bold"
                   : "border-transparent text-dark/70 hover:text-dark hover:border-gold/50"
@@ -71,7 +71,7 @@ function CategoryBarFallback() {
           <Link
             key={tab.name}
             href={tab.href}
-            className="text-xs font-semibold uppercase tracking-[0.18em] py-1 border-b-2 border-transparent text-dark/70"
+            className="font-heading text-xs font-semibold uppercase tracking-[0.18em] py-1 border-b-2 border-transparent text-dark/70"
           >
             {tab.name}
           </Link>
@@ -190,7 +190,7 @@ export function Header() {
       {/* Row 1 (top bar) — slim, dark background (bg-dark), cream text, py-2 px-8 */}
       <div className="bg-dark text-cream py-2 px-4 sm:px-8 flex items-center justify-between text-xs tracking-wider font-light border-b border-white/5">
         <div className="flex items-center space-x-2 truncate">
-          <span>Free delivery within Lagos in 24–48hrs</span>
+          <span>We offer same-day (doorstep) delivery within Lagos, excluding Sundays</span>
         </div>
 
         <div className="flex items-center space-x-4 sm:space-x-6 flex-shrink-0">
@@ -241,7 +241,7 @@ export function Header() {
               href="/"
               className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-dark hover:text-gold transition-colors"
             >
-              Cloudlette
+              Cloudlette ♡
             </Link>
           </div>
 
@@ -424,7 +424,7 @@ export function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                     className="font-heading text-2xl font-bold tracking-tight text-dark hover:text-gold transition-colors"
                   >
-                    Cloudlette
+                    Cloudlette ♡
                   </Link>
                   <button
                     type="button"

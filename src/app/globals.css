@@ -42,8 +42,8 @@
   }
   body {
     @apply bg-off-white text-dark antialiased font-sans min-h-screen selection:bg-gold selection:text-dark;
-    background-color: #FDFCFA;
-    color: #2B211A;
+    background-color: #FDF8EC;
+    color: #1A1A1A;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;

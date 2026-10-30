@@ -29,11 +29,20 @@ export function FeaturedCategories() {
   return (
     <section className="py-16 sm:py-24 bg-cream w-full">
       <div className="w-full px-4 sm:px-8 lg:px-16">
-        {/* Section Heading Left-Aligned, Playfair Display, Large, Dark. No eyebrow. */}
+        {/* Section Heading Left-Aligned with subtitle link */}
         <FadeInSection className="mb-10 text-left">
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-dark">
             Shop by Category
           </h2>
+          <div className="mt-2">
+            <Link
+              href="/shop"
+              className="text-sm sm:text-base font-semibold text-dark/80 hover:text-gold transition-colors inline-flex items-center gap-1 group"
+            >
+              <span>Shop all</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          </div>
         </FadeInSection>
 
         <FadeInSection>
