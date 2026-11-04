@@ -74,8 +74,8 @@ export default function AddProductPage() {
 
     // TODO: POST /api/products
     showToast(
-      "Product Saved!",
-      "Backend integration coming — changes reflected in local view."
+      "Preview form submitted",
+      "No product was created. Persistence requires the administrative API."
     );
 
     router.push("/admin/products");

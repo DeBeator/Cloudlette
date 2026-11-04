@@ -9,10 +9,12 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductCardSkeleton } from "@/components/shop/ProductCardSkeleton";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { Heart, ArrowRight } from "lucide-react";
+import { useRequireAuth } from "@/lib/withAuth";
 
 export const dynamic = "force-dynamic";
 
 export default function WishlistPage() {
+  useRequireAuth();
   const wishlistIds = useWishlistStore((state) => state.items);
   const { data: allProducts, loading } = useProducts();
 

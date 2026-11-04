@@ -9,6 +9,7 @@ export function useProducts(filters?: ProductFilters) {
   const [data, setData] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,7 +31,12 @@ export function useProducts(filters?: ProductFilters) {
     };
     // Stringify filters for stable dependency — filters object may be recreated each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filters)]);
+  }, [JSON.stringify(filters), reloadKey]);
 
-  return { data, loading, error };
+  return {
+    data,
+    loading,
+    error,
+    retry: () => setReloadKey((current) => current + 1),
+  };
 }

@@ -120,7 +120,7 @@ export default function OrdersListPage() {
               </div>
               <div className="space-y-1">
                 <h3 className="font-heading text-xl font-normal text-dark">
-                  You haven't placed any orders yet
+                  You haven&apos;t placed any orders yet
                 </h3>
                 <p className="text-xs text-dark-muted font-light">
                   Explore our luxury collection of bags, shoes, and tops to place your first order.

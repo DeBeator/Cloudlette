@@ -33,7 +33,7 @@ export default function AboutPage() {
                     Cloudlette Studio
                   </p>
                   <p className="text-xs font-mono tracking-wider opacity-60 uppercase">
-                    // TODO: client brand photography
+                    Client brand photography pending
                   </p>
                 </div>
               </div>
@@ -48,7 +48,7 @@ export default function AboutPage() {
                     Cloudlette is a fashion brand for women who know what they want. We carry bags, shoes, and tops — pieces we&apos;d wear ourselves. Nothing fussy, nothing forced. Just good style that works for real life.
                   </p>
                   <p>
-                    We&apos;re based in Lagos and we ship nationwide — and to Ghana, Benin Republic, Cotonou, and Abidjan. Whether you pick up at Berger or we bring it to your door, we want every order to feel worth it.
+                    We&apos;re based in Lagos and ship nationwide within Nigeria. Whether you pick up at Berger Park or we bring it to your door, we want every order to feel worth it.
                   </p>
                 </div>
               </div>

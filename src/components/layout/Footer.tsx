@@ -124,12 +124,7 @@ export function Footer() {
             <div className="pt-2 space-y-2 text-xs text-brand-ivory/70 font-light border-t border-brand-beige/10">
               <div className="flex items-center space-x-2">
                 <Mail className="h-3.5 w-3.5 text-brand-butter flex-shrink-0" />
-                <a
-                  href="mailto:Hercloudlette@gmail.com"
-                  className="hover:text-brand-butter transition-colors truncate"
-                >
-                  Hercloudlette@gmail.com
-                </a>
+                <span>Support contact details are being confirmed.</span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-3.5 w-3.5 text-brand-butter flex-shrink-0" />

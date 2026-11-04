@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { formatPrice } from "@/lib/format";
-import { Product } from "@/lib/mock-data";
+import type { Product } from "@/types";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useToast } from "@/components/ui/toast";
@@ -25,15 +25,20 @@ export function ProductCard({ product, badge }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
 
-    const defaultVariant =
-      product.variants.find((v) => v.stockQty > 0) || product.variants[0];
+    const availableVariants = product.variants.filter(
+      (variant) => variant.isActive !== false && variant.stockQty > 0
+    );
+    // Quick add is safe only when there is one purchasable variant. Products
+    // with meaningful variant choices should be selected on their detail page.
+    if (availableVariants.length !== 1) return;
+    const defaultVariant = availableVariants[0];
 
     addItem({
       productId: product.id,
       variantId: defaultVariant.id,
       name: product.name,
       category: product.category,
-      price: product.price,
+      price: defaultVariant.price,
       image: product.images[0],
       size: defaultVariant.size,
       color: defaultVariant.color,
@@ -53,12 +58,17 @@ export function ProductCard({ product, badge }: ProductCardProps) {
     );
   };
 
-  const isOutOfStock = product.variants.every((v) => v.stockQty <= 0);
+  const availableVariants = product.variants.filter(
+    (variant) => variant.isActive !== false && variant.stockQty > 0
+  );
+  const isOutOfStock = availableVariants.length === 0;
+  const canQuickAdd = availableVariants.length === 1;
 
   return (
     <div className="group flex flex-col bg-brand-ivory rounded-2xl overflow-hidden border border-brand-beige/80 shadow-xs hover:shadow-lg transition-all duration-300 h-full relative">
       {/* Image Container — Tall portrait aspect ratio aspect-[3/4] */}
-      <Link href={`/product/${product.slug}`} className="block relative aspect-[3/4] w-full bg-brand-beige/30 overflow-hidden">
+      <div className="relative aspect-[3/4] w-full bg-brand-beige/30 overflow-hidden">
+        <Link href={`/product/${product.slug}`} className="block absolute inset-0" aria-label={`View ${product.name}`}>
         {/* Product Image */}
         <Image
           src={product.images[0]}
@@ -68,7 +78,8 @@ export function ProductCard({ product, badge }: ProductCardProps) {
           className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
         />
 
-        {/* Heart Icon Top-Right (Wishlist toggle, no page navigation) */}
+        </Link>
+        {/* Independent controls must not be nested inside the product link. */}
         <button
           type="button"
           onClick={handleWishlistClick}
@@ -102,8 +113,8 @@ export function ProductCard({ product, badge }: ProductCardProps) {
           </div>
         )}
 
-        {/* Desktop Quick "ADD TO CART" bar slides up from bottom of image */}
-        {!isOutOfStock && (
+        {/* Desktop quick add is shown only for one unambiguous in-stock variant. */}
+        {canQuickAdd && (
           <button
             type="button"
             onClick={handleAddToCart}
@@ -113,7 +124,7 @@ export function ProductCard({ product, badge }: ProductCardProps) {
             <span>Add to Cart</span>
           </button>
         )}
-      </Link>
+      </div>
 
       {/* Info Section Below Image */}
       <div className="p-4 flex flex-col flex-grow justify-between space-y-2 bg-brand-ivory">
@@ -135,7 +146,7 @@ export function ProductCard({ product, badge }: ProductCardProps) {
           </p>
 
           {/* Mobile small '+' icon button */}
-          {!isOutOfStock && (
+          {canQuickAdd ? (
             <button
               type="button"
               onClick={handleAddToCart}
@@ -145,7 +156,14 @@ export function ProductCard({ product, badge }: ProductCardProps) {
             >
               <Plus className="h-4 w-4 stroke-[2.5]" />
             </button>
-          )}
+          ) : !isOutOfStock ? (
+            <Link
+              href={`/product/${product.slug}`}
+              className="inline-flex h-8 items-center rounded-full bg-brand-black px-3 text-[10px] font-bold uppercase tracking-wide text-brand-ivory transition-colors hover:bg-brand-black-light md:hidden"
+            >
+              Options
+            </Link>
+          ) : null}
         </div>
       </div>
     </div>

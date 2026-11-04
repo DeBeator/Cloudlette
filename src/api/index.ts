@@ -1,6 +1,5 @@
-// When NEXT_PUBLIC_API_URL is empty/unset, use mock adapters.
-// When it has a value, use real API clients.
-export const USE_MOCK = !process.env.NEXT_PUBLIC_API_URL;
+export { API_CONFIGURATION_ERROR, API_MODE, USE_MOCK } from "./config";
+import { USE_MOCK } from "./config";
 
 // ─── Products ────────────────────────────────────────────────────────
 import * as realProducts from "./products";

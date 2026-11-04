@@ -59,20 +59,29 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
   // Available unique colors for product
   const availableColors = useMemo(() => {
     if (!product) return [];
-    return Array.from(new Set(product.variants.map((v) => v.color)));
+    return Array.from(
+      new Set(product.variants.filter((variant) => variant.isActive !== false).map((v) => v.color))
+    );
   }, [product]);
 
   // Check if product category requires size selection (shoes & tops)
   const hasSizes = useMemo(() => {
     if (!product) return false;
-    return product.category !== "bag" && product.variants.some((v) => v.size !== null);
+    return product.category !== "bag" && product.variants.some(
+      (variant) => variant.isActive !== false && variant.size !== null
+    );
   }, [product]);
 
   // All unique sizes available across variants for this product
   const allProductSizes = useMemo(() => {
     if (!product || !hasSizes) return [];
     const sizes = Array.from(
-      new Set(product.variants.map((v) => v.size).filter((s): s is string => s !== null))
+      new Set(
+        product.variants
+          .filter((variant) => variant.isActive !== false)
+          .map((v) => v.size)
+          .filter((s): s is string => s !== null)
+      )
     );
     return sizes;
   }, [product, hasSizes]);
@@ -81,7 +90,9 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
   useEffect(() => {
     if (product && product.variants.length > 0) {
       const firstInStock =
-        product.variants.find((v) => (v.stockQty ?? 0) > 0) || product.variants[0];
+        product.variants.find((variant) => variant.isActive !== false && (variant.stockQty ?? 0) > 0) ||
+        product.variants.find((variant) => variant.isActive !== false);
+      if (!firstInStock) return;
       setSelectedColor(firstInStock.color);
       setSelectedSize(firstInStock.size);
       setQuantity(1);
@@ -117,7 +128,7 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
   const selectedVariant: ProductVariant | undefined = useMemo(() => {
     if (!product) return undefined;
     return product.variants.find((v) => {
-      const colorMatch = v.color === selectedColor;
+      const colorMatch = v.isActive !== false && v.color === selectedColor;
       const sizeMatch = hasSizes ? v.size === selectedSize : true;
       return colorMatch && sizeMatch;
     });
@@ -140,7 +151,9 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
     if (hasSizes && product) {
-      const matchingVariants = product.variants.filter((v) => v.color === color);
+      const matchingVariants = product.variants.filter(
+        (variant) => variant.isActive !== false && variant.color === color
+      );
       const firstInStockForColor =
         matchingVariants.find((v) => (v.stockQty ?? 0) > 0) || matchingVariants[0];
       if (firstInStockForColor) {
@@ -159,7 +172,7 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
         variantId: selectedVariant.id,
         name: product.name,
         category: product.category,
-        price: product.price,
+        price: selectedVariant.price,
         image: product.images[0],
         size: selectedVariant.size,
         color: selectedVariant.color,
@@ -236,9 +249,10 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
     );
   }
 
-  const hasDiscount = Boolean(product.compareAtPrice && product.compareAtPrice > product.price);
+  const displayPrice = selectedVariant?.price ?? product.price;
+  const hasDiscount = Boolean(product.compareAtPrice && product.compareAtPrice > displayPrice);
   const discountPercent = hasDiscount
-    ? Math.round((((product.compareAtPrice || 0) - product.price) / (product.compareAtPrice || 1)) * 100)
+    ? Math.round((((product.compareAtPrice || 0) - displayPrice) / (product.compareAtPrice || 1)) * 100)
     : 0;
 
   // JSON-LD structured data schema
@@ -370,7 +384,7 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
                 </span>
               )}
               <p className="text-dark font-semibold text-2xl sm:text-3xl">
-                {formatPrice(product.price)}
+                {formatPrice(displayPrice)}
               </p>
               {hasDiscount && (
                 <p className="text-dark/40 line-through text-lg sm:text-xl font-normal">
@@ -408,7 +422,7 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
                   {allProductSizes.map((size) => {
                     const isSelected = selectedSize === size;
                     const matchingVar = product.variants.find(
-                      (v) => v.color === selectedColor && v.size === size
+                      (v) => v.isActive !== false && v.color === selectedColor && v.size === size
                     );
                     const sizeStock = matchingVar ? (matchingVar.stockQty ?? 0) : 0;
                     const isSizeOutOfStock = !matchingVar || sizeStock <= 0;
@@ -507,7 +521,7 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
                     ? "Select Options"
                     : isOutOfStock
                     ? "Out of Stock"
-                    : `Add to Cart — ${formatPrice(product.price * quantity)}`}
+                    : `Add to Cart — ${formatPrice(displayPrice * quantity)}`}
                 </span>
               </button>
             </div>
@@ -538,24 +552,24 @@ export function ProductDetailClient({ slug }: ProductDetailClientProps) {
               </button>
             </div>
 
-            {/* 9. Trust Badges Row: 3 items side by side */}
+            {/* Delivery information is intentionally limited to client-approved details. */}
             <div className="grid grid-cols-3 gap-2 py-4 border-y border-blush/40">
               <div className="flex flex-col items-center text-center space-y-1.5 p-2">
                 <Truck className="w-4 h-4 text-gold flex-shrink-0" />
                 <span className="text-[11px] font-semibold text-dark uppercase tracking-wider leading-tight">
-                  Free Lagos Delivery
+                  Same-day Lagos delivery, excluding Sundays
                 </span>
               </div>
               <div className="flex flex-col items-center text-center space-y-1.5 p-2 border-x border-blush/30">
                 <RotateCcw className="w-4 h-4 text-gold flex-shrink-0" />
                 <span className="text-[11px] font-semibold text-dark uppercase tracking-wider leading-tight">
-                  Easy Returns
+                  Fees confirmed by location
                 </span>
               </div>
               <div className="flex flex-col items-center text-center space-y-1.5 p-2">
                 <ShieldCheck className="w-4 h-4 text-gold flex-shrink-0" />
                 <span className="text-[11px] font-semibold text-dark uppercase tracking-wider leading-tight">
-                  Secure Payment
+                  Pickup at Berger Park
                 </span>
               </div>
             </div>

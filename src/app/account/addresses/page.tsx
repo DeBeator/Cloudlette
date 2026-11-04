@@ -5,10 +5,12 @@ import { AccountSidebar } from "@/components/account/AccountSidebar";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { Button } from "@/components/ui/button";
 import { MapPin, ArrowLeft } from "lucide-react";
+import { useRequireAuth } from "@/lib/withAuth";
 
 export const dynamic = "force-dynamic";
 
 export default function AddressesPage() {
+  useRequireAuth();
   return (
     <FadeInSection className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start">

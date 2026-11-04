@@ -98,8 +98,8 @@ export default function EditProductPage({
 
     // TODO: PUT /api/products/:id
     showToast(
-      "Product Updated!",
-      "Backend integration coming — changes saved in local session."
+      "Preview changes only",
+      "Product changes are not persisted until the administrative API is connected."
     );
 
     router.push("/admin/products");

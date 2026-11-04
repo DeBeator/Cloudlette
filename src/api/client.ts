@@ -1,4 +1,5 @@
 import type { ApiResponse } from "@/types";
+import { API_CONFIGURATION_ERROR } from "./config";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -10,6 +11,14 @@ export async function apiClient<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
+  if (API_CONFIGURATION_ERROR) {
+    return {
+      success: false,
+      data: undefined as unknown as T,
+      error: API_CONFIGURATION_ERROR,
+    };
+  }
+
   const url = `${BASE_URL}${endpoint}`;
 
   const headers: HeadersInit = {
@@ -23,13 +32,19 @@ export async function apiClient<T>(
       headers,
     });
 
-    const body = await response.json();
+    const contentType = response.headers.get("content-type") || "";
+    const body = contentType.includes("application/json")
+      ? await response.json()
+      : undefined;
 
     if (!response.ok) {
       return {
         success: false,
         data: body as T,
-        error: body.error || body.message || `Request failed with status ${response.status}`,
+        error:
+          (body as { error?: string; message?: string } | undefined)?.error ||
+          (body as { error?: string; message?: string } | undefined)?.message ||
+          `Request failed with status ${response.status}`,
       };
     }
 

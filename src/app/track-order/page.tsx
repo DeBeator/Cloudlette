@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MessageCircle, ArrowLeft, PackageCheck, Info } from "lucide-react";
+import { Search, ArrowLeft, PackageCheck, Info } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -105,19 +105,8 @@ export default function TrackOrderPage() {
                 <span>Order Tracking Notice</span>
               </div>
               <p className="text-xs text-dark/80 leading-relaxed font-normal">
-                Order tracking will be live when our store launches. Contact us on WhatsApp for order updates.
+                Tracking is not connected yet. This submission does not verify an order, delivery, or payment status.
               </p>
-              <div className="pt-1">
-                <a
-                  href="https://wa.me/message/23DKTWB4MIAEE1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-full bg-dark text-cream hover:bg-gold hover:text-dark text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Contact on WhatsApp</span>
-                </a>
-              </div>
             </div>
           )}
         </div>

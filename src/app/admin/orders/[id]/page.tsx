@@ -39,8 +39,8 @@ export default function AdminOrderDetailPage({
     e.preventDefault();
     // TODO: PUT /api/orders/:id/status
     showToast(
-      "Status Updated!",
-      `Order ${order?.id} status set to "${statusVal}". Backend integration in progress.`
+      "Preview status selected",
+      `Order ${order?.id} was not changed. Status persistence requires the administrative API.`
     );
   };
 

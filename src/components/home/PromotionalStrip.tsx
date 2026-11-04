@@ -23,7 +23,7 @@ export function PromotionalStrip() {
             </div>
             <div>
               <p className="font-handwriting font-bold text-2xl sm:text-3xl text-brand-black tracking-tight leading-none">
-                Curated in Lagos · Handpicked with Love ♡
+                Good pieces make brighter days.
               </p>
               <p className="text-xs text-brand-black/70 font-normal mt-0.5">
                 New boutique arrivals and limited restocks every Friday.

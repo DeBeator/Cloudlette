@@ -297,7 +297,7 @@ export default function AdminProductsPage() {
                 Delete Product?
               </h3>
               <p className="text-xs text-dark-muted leading-relaxed font-light">
-                Are you sure you want to delete <span className="font-bold text-dark">"{productToDelete.name}"</span>? This action cannot be undone once backend synchronization is active.
+                Are you sure you want to delete <span className="font-bold text-dark">&ldquo;{productToDelete.name}&rdquo;</span>? This action cannot be undone once backend synchronization is active.
               </p>
             </div>
             <div className="flex items-center justify-end space-x-3 pt-2">

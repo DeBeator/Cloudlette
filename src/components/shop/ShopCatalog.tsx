@@ -5,10 +5,11 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProducts } from "@/hooks/useProducts";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { ProductListCard } from "@/components/shop/ProductListCard";
 import { ProductCardSkeleton } from "@/components/shop/ProductCardSkeleton";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { getColorHex } from "@/lib/mock-data";
-import { SlidersHorizontal, X, RotateCcw, Check, Search } from "lucide-react";
+import { SlidersHorizontal, X, RotateCcw, Check, Search, Grid2X2, List } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types";
 
@@ -41,7 +42,7 @@ export function ShopCatalog({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { data: products, loading } = useProducts();
+  const { data: products, loading, error, retry } = useProducts();
 
   // Read URL params
   const categoryParam = forcedCategory || searchParams?.get("category") || "all";
@@ -52,6 +53,8 @@ export function ShopCatalog({
   const availabilityParam = (searchParams?.get("availability") as AvailabilityOption) || "all";
   const sortParam = (searchParams?.get("sort") as SortOption) || "newest";
   const queryParam = searchParams?.get("q") || "";
+  const viewParam = searchParams?.get("view");
+  const view = viewParam === "list" ? "list" : "grid";
 
   // Local state for inputs to allow smooth typing
   const [minPriceInput, setMinPriceInput] = useState(minPriceParam);
@@ -124,6 +127,7 @@ export function ShopCatalog({
     setMaxPriceInput("");
     const current = new URLSearchParams();
     if (queryParam) current.set("q", queryParam);
+    if (view === "list") current.set("view", "list");
     const targetUrl = current.toString() ? `${pathname}?${current.toString()}` : pathname;
     router.replace(targetUrl, { scroll: false });
   };
@@ -594,8 +598,30 @@ export function ShopCatalog({
               {filteredProducts.length === 1 ? "product" : "products"}
             </p>
 
-            {/* Sort Dropdown */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
+              <div className="inline-flex rounded-lg border border-blush/60 bg-white p-0.5" role="group" aria-label="Product display mode">
+                <button
+                  type="button"
+                  onClick={() => updateParams({ view: null })}
+                  aria-pressed={view === "grid"}
+                  className={cn("rounded-md p-2 transition-colors", view === "grid" ? "bg-brand-black text-brand-ivory" : "text-dark-muted hover:bg-cream")}
+                  title="Grid view"
+                >
+                  <Grid2X2 className="h-4 w-4" aria-hidden="true" />
+                  <span className="sr-only">Grid view</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateParams({ view: "list" })}
+                  aria-pressed={view === "list"}
+                  className={cn("rounded-md p-2 transition-colors", view === "list" ? "bg-brand-black text-brand-ivory" : "text-dark-muted hover:bg-cream")}
+                  title="List view"
+                >
+                  <List className="h-4 w-4" aria-hidden="true" />
+                  <span className="sr-only">List view</span>
+                </button>
+              </div>
+              {/* Sort Dropdown */}
               <label htmlFor="sort-select" className="hidden sm:block text-xs font-medium text-dark-muted">
                 Sort by:
               </label>
@@ -719,10 +745,26 @@ export function ShopCatalog({
 
           {/* Product Grid or Skeletons */}
           {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className={view === "list" ? "space-y-4" : "grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"}>
               {Array.from({ length: 6 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
+            </div>
+          ) : error ? (
+            <div className="text-center py-20 bg-cream/20 rounded-2xl border border-blush/40 p-8 space-y-3" role="alert">
+              <p className="text-dark font-semibold text-base">We couldn&apos;t load the catalog.</p>
+              <p className="text-dark-muted text-xs font-light">
+                {error === "The catalog service has not been configured for this deployment."
+                  ? "This storefront is awaiting catalog service configuration. Please try again later."
+                  : "Please check your connection and try again shortly."}
+              </p>
+              <button
+                type="button"
+                onClick={retry}
+                className="mt-2 inline-flex items-center px-4 py-2 bg-dark text-cream rounded-full text-xs font-bold uppercase tracking-wider hover:bg-gold hover:text-dark transition-colors"
+              >
+                Try again
+              </button>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-20 bg-cream/20 rounded-2xl border border-blush/40 p-8 space-y-3">
@@ -740,20 +782,24 @@ export function ShopCatalog({
             </div>
           ) : (
             <FadeInSection>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+              <div className={view === "list" ? "space-y-4" : "grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"}>
                 {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    badge={
-                      product.tags.includes("fast-selling")
-                        ? "SELLING FAST"
-                        : product.tags.includes("new-arrival")
-                        ? "NEW"
-                        : undefined
-                    }
-                    badgeType={product.tags.includes("fast-selling") ? "hot" : "new"}
-                  />
+                  view === "list" ? (
+                    <ProductListCard key={product.id} product={product} />
+                  ) : (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      badge={
+                        product.tags.includes("fast-selling")
+                          ? "SELLING FAST"
+                          : product.tags.includes("new-arrival")
+                          ? "NEW"
+                          : undefined
+                      }
+                      badgeType={product.tags.includes("fast-selling") ? "hot" : "new"}
+                    />
+                  )
                 ))}
               </div>
             </FadeInSection>

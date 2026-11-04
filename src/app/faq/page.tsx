@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { FadeInSection } from "@/components/animations/FadeInSection";
-import { ChevronDown, MessageCircle, Mail } from "lucide-react";
+import { ChevronDown, Mail } from "lucide-react";
 
 interface FAQItem {
   id: string;
@@ -19,7 +19,7 @@ const FAQ_DATA: FAQItem[] = [
     topic: "Delivery",
     question: "How long does delivery take within Lagos and nationwide?",
     answer:
-      "Deliveries within Lagos arrive within 24 to 48 hours via our dedicated courier service. Interstate deliveries across Nigeria take 3 to 5 business days with verified national partners. You will receive dispatch updates via SMS and WhatsApp.",
+      "Same-day doorstep delivery is available within Lagos, excluding Sundays. Delivery timing for other destinations is confirmed before checkout completion.",
   },
   {
     id: "delivery-2",
@@ -33,49 +33,49 @@ const FAQ_DATA: FAQItem[] = [
     topic: "Payments",
     question: "What payment methods do you accept?",
     answer:
-      "We accept all major Nigerian debit and credit cards (Mastercard, Visa, and Verve), direct bank transfers, and USSD banking through our Paystack-secured checkout. All payment transactions are encrypted using 256-bit bank-grade SSL security.",
+      "Payment options will be confirmed when the checkout service is connected. This frontend does not currently process payments.",
   },
   {
     id: "payments-2",
     topic: "Payments",
     question: "Is payment on delivery (POD) available?",
     answer:
-      "To preserve the integrity and exclusive reservation of our limited-batch luxury products, orders must be secured online during checkout prior to dispatch.",
+      "Payment-on-delivery availability has not been confirmed. Please do not assume an order or payment is complete until the checkout service confirms it.",
   },
   {
     id: "returns-1",
     topic: "Returns",
     question: "What is your exchange and return policy?",
     answer:
-      "We offer exchanges or store credit within 7 calendar days of delivery for unworn items in pristine condition, with all original tags, dust bags, and protective wrapping intact. Read our complete Refund Policy for full eligibility details.",
+      "Please review the Refund Policy for the current terms. Return and exchange handling requires client confirmation before launch.",
   },
   {
     id: "sizes-1",
     topic: "Sizes",
     question: "How do I choose the correct size?",
     answer:
-      "Our tops and blouses fit true to size. For pointed-toe mules and heels, we advise selecting one EU size up if you have broader feet or are between sizes. Each shoe and top product page features an interactive Size Guide with exact centimeter measurements.",
+      "Use the product's available size options and size guide where provided. Fit guidance varies by product and should not be assumed across the collection.",
   },
   {
     id: "tracking-1",
     topic: "Order Tracking",
     question: "How can I track my package?",
     answer:
-      "You can visit our Track Order page at any time to monitor your shipment status. Additionally, our courier dispatch rider will contact you directly on WhatsApp or mobile prior to arrival.",
+      "Order tracking will be available when the order service is connected. A tracking page alone does not confirm an order or shipment.",
   },
   {
     id: "intl-1",
     topic: "International Delivery",
     question: "Do you ship internationally outside Nigeria?",
     answer:
-      "Yes, we ship to Ghana, Benin Republic, Cotonou, and Abidjan. Contact us on WhatsApp for international shipping quotes.",
+      "International delivery availability is currently being confirmed. Please contact Cloudlette before making plans for delivery outside Nigeria.",
   },
   {
     id: "contact-1",
     topic: "Contact",
     question: "How can I reach Cloudlette customer support?",
     answer:
-      "Our customer care concierge is available Monday to Saturday, 9:00 AM to 7:00 PM (WAT). Reach us instantly on WhatsApp at +234 800 CLOUDLETTE or email hello@cloudlette.com.",
+      "Support contact details and business hours are being confirmed.",
   },
 ];
 
@@ -202,18 +202,9 @@ export default function FAQPage() {
             Still have questions?
           </h2>
           <p className="text-xs sm:text-sm text-dark-muted font-light max-w-md mx-auto">
-            Our luxury styling & order concierge is standing by to help with sizing, orders, and inquiries.
+            Support contact details are being finalised. You can review the contact page for the latest available information.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
-            <a
-              href="https://wa.me/message/23DKTWB4MIAEE1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-dark text-cream hover:bg-gold hover:text-dark text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>Chat on WhatsApp</span>
-            </a>
             <Link
               href="/contact"
               className="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-white text-dark hover:bg-cream border border-blush/80 text-xs font-semibold uppercase tracking-wider transition-colors"

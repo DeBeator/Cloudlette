@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AdminAccessBoundary } from "@/components/admin/AdminAccessBoundary";
 
 export default function AdminLayout({
   children,
@@ -59,6 +60,7 @@ export default function AdminLayout({
   };
 
   return (
+    <AdminAccessBoundary>
     <div className="min-h-screen flex flex-col md:flex-row bg-cream/20">
       {/* Mobile Top Bar */}
       <div className="md:hidden bg-dark text-cream px-4 py-3.5 flex items-center justify-between fixed top-0 left-0 right-0 z-40 shadow-md">
@@ -220,5 +222,6 @@ export default function AdminLayout({
         {children}
       </main>
     </div>
+    </AdminAccessBoundary>
   );
 }

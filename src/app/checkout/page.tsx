@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -77,7 +77,7 @@ function CheckoutForm() {
   // Re-enable auth guard (Step 5)
   const { isAuthenticated, isLoading: authLoading, user } = useRequireAuth();
 
-  const { items, getTotalPrice } = useCartStore();
+  const { items } = useCartStore();
   const { showToast } = useToast();
 
   const [mounted, setMounted] = useState(false);
@@ -116,22 +116,19 @@ function CheckoutForm() {
     }
   }, [user, fullName, email, phone]);
 
-  // Shipping Fee Calculation
-  const shippingFee = useMemo(() => {
-    if (deliveryType === "pickup") {
-      return 1000;
-    }
-    if (selectedState.toLowerCase().includes("lagos")) {
-      return 3500;
-    }
-    return 5000;
-  }, [deliveryType, selectedState]);
+  const subtotal = mounted
+    ? items.reduce((total, item) => total + item.price * item.quantity, 0)
+    : 0;
 
-  const subtotal = useMemo(() => {
-    return mounted ? getTotalPrice() : 0;
-  }, [mounted, getTotalPrice, items]);
-
-  const grandTotal = subtotal + shippingFee;
+  // Delivery is confirmed by the store/backend from the customer's location.
+  // The Berger Park handling fee is paid offline to the storekeeper and is
+  // never included in an online total.
+  const deliverySummary =
+    deliveryType === "pickup"
+      ? "₦1,000 handling fee, paid directly to the Berger Park storekeeper"
+      : selectedState.toLowerCase().includes("lagos")
+      ? "₦2,000–₦7,000, confirmed by location before ordering"
+      : "₦5,000–₦7,000, confirmed by destination before ordering";
 
   // Validate Step 1
   const validateStep1 = (): boolean => {
@@ -202,9 +199,7 @@ function CheckoutForm() {
   };
 
   // Step 4: Handle Place Order — Holding message (do NOT create fake order or navigate)
-  const handlePlaceOrder = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handlePlaceOrder = () => {
     if (!validateStep1() || !validateStep2()) {
       return;
     }
@@ -396,9 +391,7 @@ function CheckoutForm() {
               <ChevronDown className="h-4 w-4 text-dark-muted" />
             )}
           </div>
-          <span className="text-sm font-bold text-dark font-mono">
-            {formatPrice(grandTotal)}
-          </span>
+          <span className="text-sm font-bold text-dark font-mono">{formatPrice(subtotal)}</span>
         </button>
 
         {mobileSummaryOpen && (
@@ -435,12 +428,12 @@ function CheckoutForm() {
                 <span>{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between text-dark-muted">
-                <span>Shipping ({deliveryType === "home" ? "Delivery" : "Pickup"})</span>
-                <span>{formatPrice(shippingFee)}</span>
+                <span>Delivery</span>
+                <span>Confirmed separately</span>
               </div>
               <div className="flex justify-between text-dark font-bold text-sm pt-2 border-t border-blush/30">
-                <span>Total</span>
-                <span className="text-dark font-mono">{formatPrice(grandTotal)}</span>
+                <span>Products subtotal</span>
+                <span className="text-dark font-mono">{formatPrice(subtotal)}</span>
               </div>
             </div>
           </div>
@@ -607,10 +600,10 @@ function CheckoutForm() {
                 >
                   <MapPin className="w-5 h-5 text-gold mb-2" />
                   <p className="text-xs font-bold uppercase tracking-wider text-dark">
-                    In-Store Pickup
+                    Berger Park Pickup
                   </p>
                   <p className="text-[11px] text-dark-muted font-light mt-0.5">
-                    Lagos Showroom pickup
+                    Berger Park pickup
                   </p>
                 </button>
               </div>
@@ -623,18 +616,16 @@ function CheckoutForm() {
                       ? selectedState.toLowerCase().includes("lagos")
                         ? "Lagos Express Courier"
                         : "Nationwide Interstate Shipping"
-                      : "Lagos Showroom Pickup Handling"}
+                      : "Berger Park Pickup"}
                   </span>
-                  <span className="font-mono text-gold-hover font-semibold">
-                    {formatPrice(shippingFee)}
-                  </span>
+                  <span className="text-right text-[11px] font-semibold text-dark-muted max-w-[13rem]">{deliverySummary}</span>
                 </div>
                 <p className="text-[11px] text-dark-muted font-light">
                   {deliveryType === "home"
                     ? selectedState.toLowerCase().includes("lagos")
-                      ? "Same-day doorstep delivery within Lagos (excluding Sundays)"
-                      : "Delivered within 3–5 business days via verified national courier."
-                    : "Ready for pickup within 24 hours at Victoria Island, Lagos."}
+                      ? "Same-day doorstep delivery is available within Lagos, excluding Sundays. The final fee is confirmed by location."
+                      : "Delivery fees vary by destination and are confirmed before an order is completed."
+                    : "Pickup is at Berger Park. Pay the ₦1,000 handling fee directly to the storekeeper."}
                 </p>
               </div>
 
@@ -647,7 +638,7 @@ function CheckoutForm() {
                       Street Address <span className="text-rose-500">*</span>
                     </label>
                     <Input
-                      placeholder="e.g. 14 Adeola Odeku Street, Victoria Island"
+                      placeholder="Enter your delivery street address"
                       value={streetAddress}
                       onChange={(e) => {
                         setStreetAddress(e.target.value);
@@ -670,7 +661,7 @@ function CheckoutForm() {
                         City / Area <span className="text-rose-500">*</span>
                       </label>
                       <Input
-                        placeholder="e.g. Victoria Island / Ikeja"
+                        placeholder="Enter your city or area"
                         value={city}
                         onChange={(e) => {
                           setCity(e.target.value);
@@ -719,12 +710,12 @@ function CheckoutForm() {
                 </div>
               ) : (
                 <div className="bg-cream/40 p-4 rounded-xl border border-blush/50 text-xs text-dark space-y-1">
-                  <p className="font-bold text-dark">Lagos Showroom Pickup Point:</p>
+                  <p className="font-bold text-dark">Berger Park Pickup Point:</p>
                   <p className="text-dark-muted">
-                    Cloudlette Luxury Lounge, 24 Bishop Oluwole Street, Victoria Island, Lagos.
+                    Berger Park. Pickup instructions are confirmed directly by the store after your order enquiry.
                   </p>
                   <p className="text-[11px] text-dark-muted font-light pt-1">
-                    Opening Hours: Monday – Saturday, 10:00 AM – 7:00 PM.
+                    The ₦1,000 handling fee is paid directly to the storekeeper and is not included in any online total.
                   </p>
                 </div>
               )}
@@ -819,11 +810,11 @@ function CheckoutForm() {
                     </p>
                   ) : (
                     <p className="text-xs text-dark-muted font-light">
-                      Victoria Island Showroom, Lagos
+                      Berger Park — pickup instructions confirmed by the store
                     </p>
                   )}
                   <p className="text-xs text-gold-hover font-medium pt-1">
-                    Shipping: {formatPrice(shippingFee)}
+                    Delivery: {deliverySummary}
                   </p>
                 </div>
               </div>
@@ -838,19 +829,16 @@ function CheckoutForm() {
                     <div className="flex items-center space-x-2.5">
                       <CreditCard className="w-5 h-5 text-gold" />
                       <span className="text-xs font-bold text-dark uppercase tracking-wider">
-                        Paystack Secure Payment Gateway
+                        Payment setup in progress
                       </span>
                     </div>
-                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      Secured
-                    </span>
                   </div>
                   <p className="text-xs text-dark-muted font-light leading-relaxed">
-                    Accepts Nigerian Debit & Credit Cards (Mastercard, Visa, Verve), Bank Transfers, and USSD.
+                    Payment options and final delivery fees will be confirmed before any order is completed.
                   </p>
                   <div className="flex items-center space-x-2 text-[11px] text-dark-muted pt-1">
                     <ShieldCheck className="w-4 h-4 text-gold flex-shrink-0" />
-                    <span>256-Bit SSL Encrypted Transactions</span>
+                    <span>No payment is collected from this checkout yet.</span>
                   </div>
                 </div>
               </div>
@@ -890,7 +878,7 @@ function CheckoutForm() {
                   className="rounded-full px-8 py-3.5 bg-dark text-cream hover:bg-gold hover:text-dark font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md inline-flex items-center space-x-2"
                 >
                   <Lock className="w-3.5 h-3.5" />
-                  <span>Place Order — Pay {formatPrice(grandTotal)}</span>
+                  <span>Request order confirmation</span>
                 </Button>
               </div>
             </motion.div>
@@ -943,19 +931,19 @@ function CheckoutForm() {
                 <span className="font-semibold text-dark">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between text-dark-muted">
-                <span>Shipping ({deliveryType === "home" ? "Courier" : "Pickup"})</span>
-                <span className="font-semibold text-dark">{formatPrice(shippingFee)}</span>
+                <span>Delivery</span>
+                <span className="font-semibold text-dark">Confirmed separately</span>
               </div>
               <div className="flex justify-between text-dark font-bold text-base pt-3 border-t border-blush/30">
-                <span>Total Due</span>
-                <span className="text-dark font-mono">{formatPrice(grandTotal)}</span>
+                <span>Products subtotal</span>
+                <span className="text-dark font-mono">{formatPrice(subtotal)}</span>
               </div>
             </div>
 
             {/* Trust badge */}
             <div className="bg-cream/40 p-3 rounded-xl border border-blush/30 flex items-center space-x-2 text-[11px] text-dark-muted">
               <ShieldCheck className="w-4 h-4 text-gold flex-shrink-0" />
-              <span>Complimentary insured shipping across Nigeria</span>
+              <span>Delivery fees are confirmed by location before an order is completed.</span>
             </div>
           </div>
         </div>

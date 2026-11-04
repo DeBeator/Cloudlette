@@ -10,6 +10,7 @@ import {
 export function NewsletterSection() {
   const [email, setEmail] = useState("");
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [isInvalid, setIsInvalid] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,14 +18,21 @@ export function NewsletterSection() {
     // Client-side email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.trim() || !emailRegex.test(email.trim())) {
+      setIsInvalid(true);
       setStatusMessage("Please enter a valid email address.");
       return;
     }
 
+    setIsInvalid(false);
     // Transparent, honest feedback: backend subscription service is coming in Phase 2
     setStatusMessage(
       "Thank you for your interest! Our automated newsletter subscription service is currently being connected to our backend and will be live shortly."
     );
+  };
+
+  const handleInvalid = () => {
+    setIsInvalid(true);
+    setStatusMessage("Please enter a valid email address.");
   };
 
   return (
@@ -66,10 +74,14 @@ export function NewsletterSection() {
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
+                setIsInvalid(false);
                 if (statusMessage) setStatusMessage(null);
               }}
               placeholder="Enter your email address"
               required
+              onInvalid={handleInvalid}
+              aria-invalid={isInvalid}
+              aria-describedby="newsletter-feedback newsletter-privacy"
               aria-label="Email address for boutique newsletter"
               className="w-full px-5 py-2.5 sm:py-3 text-xs sm:text-sm text-brand-black placeholder:text-brand-taupe-dark bg-transparent outline-none"
             />
@@ -83,12 +95,12 @@ export function NewsletterSection() {
 
           {/* Honest status or validation feedback */}
           {statusMessage && (
-            <p className="text-xs text-brand-black/90 font-medium px-4 py-2 rounded-xl bg-brand-ivory/80 border border-brand-beige inline-block animate-in fade-in">
+            <p id="newsletter-feedback" role={isInvalid ? "alert" : "status"} aria-live="polite" className="text-xs text-brand-black/90 font-medium px-4 py-2 rounded-xl bg-brand-ivory/80 border border-brand-beige inline-block animate-in fade-in">
               {statusMessage}
             </p>
           )}
 
-          <p className="text-[11px] text-brand-taupe-dark font-light pt-1">
+          <p id="newsletter-privacy" className="text-[11px] text-brand-taupe-dark font-light pt-1">
             We respect your inbox. Unsubscribe at any time.
           </p>
         </form>

@@ -68,13 +68,17 @@ export default function AdminOverviewPage() {
         </h1>
       </div>
 
+      <p role="status" className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
+        Preview data only. Orders, revenue, and inventory shown here are not live business records until the administrative API is connected.
+      </p>
+
       {/* 4 Stat Cards Row (2x2 on mobile, 4 in row on desktop) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* Total Orders */}
         <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blush/60 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-dark-muted">
-              Total Orders
+              Preview Orders
             </span>
             <div className="p-2.5 rounded-2xl bg-gold/15 text-gold-hover">
               <ShoppingBag className="h-5 w-5 stroke-[1.8]" />
@@ -93,7 +97,7 @@ export default function AdminOverviewPage() {
         <div className="bg-white rounded-3xl p-5 sm:p-6 border border-blush/60 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-dark-muted">
-              Revenue
+              Preview Revenue
             </span>
             <div className="p-2.5 rounded-2xl bg-emerald-50 text-emerald-700">
               <TrendingUp className="h-5 w-5 stroke-[1.8]" />
@@ -105,7 +109,7 @@ export default function AdminOverviewPage() {
             </p>
             <p className="text-[11px] text-emerald-600 font-medium flex items-center space-x-1">
               <ArrowUpRight className="h-3.5 w-3.5" />
-              <span>+22% growth</span>
+              <span>Sample data</span>
             </p>
           </div>
         </div>

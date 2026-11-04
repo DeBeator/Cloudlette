@@ -2,25 +2,21 @@
 
 import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { FadeInSection } from "@/components/animations/FadeInSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Lock, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
+import { Lock, ArrowLeft, AlertCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 function ResetPasswordForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get("token") || "";
-  const emailParam = searchParams?.get("email") || "";
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,31 +32,11 @@ function ResetPasswordForm() {
       return;
     }
 
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: emailParam || "customer@cloudlette.com",
-          token,
-          password,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || data.message || "Failed to reset password.");
-      }
-
-      setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    setError(
+      token
+        ? "Password reset is not available until the account service validates reset tokens."
+        : "This password reset link is missing a valid token. Request a new link after account services are connected."
+    );
   };
 
   return (
@@ -92,26 +68,7 @@ function ResetPasswordForm() {
 
         {/* Form Card */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-blush/60 shadow-xs space-y-6">
-          {success ? (
-            <div className="text-center py-4 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <h2 className="font-heading text-xl font-bold text-dark">
-                Password Reset Complete
-              </h2>
-              <p className="text-xs text-dark-muted font-light leading-relaxed">
-                Your password has been successfully updated. You can now log into your account with your new credentials.
-              </p>
-              <Button
-                asChild
-                className="w-full rounded-full py-3.5 bg-dark text-cream hover:bg-gold hover:text-dark font-bold text-xs uppercase tracking-wider transition-colors shadow-sm mt-2"
-              >
-                <Link href="/login">Proceed to Login</Link>
-              </Button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -149,13 +106,11 @@ function ResetPasswordForm() {
 
               <Button
                 type="submit"
-                disabled={loading}
                 className="w-full rounded-full py-3.5 bg-dark text-cream hover:bg-gold hover:text-dark font-bold text-xs uppercase tracking-wider transition-colors shadow-sm disabled:opacity-50"
               >
-                {loading ? "Updating Password..." : "Update Password"}
+                Password reset unavailable
               </Button>
-            </form>
-          )}
+          </form>
         </div>
       </FadeInSection>
     </div>

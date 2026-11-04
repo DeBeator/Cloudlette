@@ -14,13 +14,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // Standard security practice: return success regardless of email existence
+    // A reset provider has not been integrated. Do not claim an email was sent.
     return NextResponse.json(
       {
-        message:
-          "If an account exists for that email, you'll receive a reset link shortly.",
+        error: "Password reset is not available yet. Please try again after account services are connected.",
       },
-      { status: 200 }
+      { status: 503 }
     );
   } catch {
     return NextResponse.json(

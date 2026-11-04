@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FadeInSection } from "@/components/animations/FadeInSection";
+import { getSafeRedirect } from "@/lib/safeRedirect";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -63,11 +64,7 @@ function SignupForm() {
 
     try {
       await signup(fullName, email, phone, password);
-      if (redirect) {
-        router.push(redirect);
-      } else {
-        router.push("/");
-      }
+      router.push(getSafeRedirect(redirect));
     } catch (err: any) {
       setError(err.message || "Failed to create account. Please try again.");
     } finally {
@@ -156,6 +153,7 @@ function SignupForm() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-muted hover:text-dark p-1"
               title={showPassword ? "Hide Password" : "Show Password"}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4 stroke-[1.5]" />
@@ -183,7 +181,7 @@ function SignupForm() {
 
         {/* Inline Error Display */}
         {error && (
-          <div className="text-xs font-medium text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200 animate-in fade-in duration-200">
+          <div role="alert" className="text-xs font-medium text-rose-600 bg-rose-50 p-3 rounded-xl border border-rose-200 animate-in fade-in duration-200">
             {error}
           </div>
         )}

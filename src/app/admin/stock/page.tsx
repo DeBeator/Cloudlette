@@ -80,8 +80,8 @@ export default function AdminStockPage() {
       updateStockQty(itemToEdit.variantId, newQtyInput);
       // TODO: PUT /api/products/variants/:id/stock
       showToast(
-        "Stock Updated!",
-        `Inventory for "${itemToEdit.productName} (${itemToEdit.color})" updated to ${newQtyInput}.`
+        "Preview stock updated",
+        `This browser-only preview sets ${itemToEdit.productName} (${itemToEdit.color}) to ${newQtyInput}; no inventory was saved.`
       );
       setItemToEdit(null);
     }
