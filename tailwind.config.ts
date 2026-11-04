@@ -87,9 +87,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        handwriting: ["Caveat", "var(--font-handwriting)", "cursive", "sans-serif"],
-        heading: ["Caveat", "var(--font-handwriting)", "cursive", "sans-serif"],
-        sans: ["Plus Jakarta Sans", "var(--font-sans)", "system-ui", "-apple-system", "sans-serif"],
+        handwriting: ["'Balsamiq Sans'", "Caveat", "var(--font-handwriting)", "cursive", "sans-serif"],
+        heading: ["'Balsamiq Sans'", "Caveat", "var(--font-handwriting)", "cursive", "sans-serif"],
+        sans: ["'Plus Jakarta Sans'", "var(--font-sans)", "system-ui", "-apple-system", "sans-serif"],
       },
       borderRadius: {
         "2xl": "1rem",

@@ -88,4 +88,3 @@ export function UnderlineSquiggle({ className = "w-24 h-3", ...props }: IconProp
     </svg>
   );
 }
-

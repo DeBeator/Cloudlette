@@ -192,7 +192,7 @@ export function Header() {
       {/* 2. Main Storefront Navigation Bar */}
       <div className="bg-brand-ivory/95 backdrop-blur-md border-b border-brand-beige shadow-xs">
         <div className="w-full max-w-7xl mx-auto py-3.5 sm:py-4 px-4 sm:px-8 lg:px-12 flex items-center justify-between gap-4">
-          
+
           {/* Left: Mobile hamburger menu / Desktop category links */}
           <div className="flex items-center space-x-6 flex-1 md:flex-initial">
             {/* Mobile Hamburger Button */}
@@ -250,7 +250,7 @@ export function Header() {
 
           {/* Right: Actions Group (Search, Account, Cart) */}
           <div className="flex items-center justify-end space-x-2 sm:space-x-4 flex-1 md:flex-initial">
-            
+
             {/* Search Toggle Button */}
             <div className="relative" ref={searchContainerRef}>
               <button

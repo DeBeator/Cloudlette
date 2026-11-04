@@ -26,7 +26,7 @@ export function Footer() {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
         {/* 4 Columns desktop layout, 1 column mobile */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-12 border-b border-brand-beige/15">
-          
+
           {/* Col 1: Brand Logo + Tagline + Social Icons (5 cols) */}
           <div className="lg:col-span-5 space-y-5">
             <Link
@@ -36,7 +36,7 @@ export function Footer() {
               <span>Cloudlette</span>
               <span className="text-2xl text-brand-butter inline-block">♡</span>
             </Link>
-            
+
             <p className="text-brand-ivory/80 text-sm sm:text-base leading-relaxed font-light max-w-md">
               Your daily dose of chic. Handcrafted luxury bags, statement heels, and lovely everyday tops — curated with love in Lagos.
             </p>
@@ -96,7 +96,7 @@ export function Footer() {
             <h4 className="text-xs font-bold text-brand-butter tracking-[0.2em] uppercase">
               Customer Care & Contact
             </h4>
-            
+
             <ul className="space-y-2.5 text-xs sm:text-sm font-light">
               {customerCareLinks.map((link) => (
                 <li key={link.name}>

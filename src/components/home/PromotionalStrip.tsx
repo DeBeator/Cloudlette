@@ -1,59 +1,46 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import {
-  BowIllustration,
-  SparkleDoodle,
-  HeartDoodle,
-} from "@/components/ui/decorative-icons";
+import { BowIllustration, SparkleDoodle } from "@/components/ui/decorative-icons";
 
 export function PromotionalStrip() {
   return (
-    <section className="w-full bg-brand-butter py-14 sm:py-18 lg:py-20 border-b border-brand-beige/70 relative overflow-hidden">
-      {/* Decorative floating doodles */}
-      <div className="absolute top-6 left-12 text-brand-black/20 hidden sm:block pointer-events-none animate-pulse">
+    <section className="w-full bg-brand-butter py-8 sm:py-10 border-b border-brand-beige/80 relative overflow-hidden">
+      {/* Decorative sparkle accents */}
+      <div className="absolute top-3 left-6 text-brand-black/20 pointer-events-none hidden sm:block">
+        <SparkleDoodle className="w-4 h-4" />
+      </div>
+      <div className="absolute bottom-3 right-8 text-brand-black/20 pointer-events-none hidden sm:block">
         <SparkleDoodle className="w-5 h-5" />
       </div>
-      <div className="absolute bottom-6 right-16 text-brand-black/20 hidden sm:block pointer-events-none">
-        <HeartDoodle className="w-5 h-5" />
-      </div>
-      <div className="absolute top-1/2 left-8 text-brand-black/15 hidden lg:block pointer-events-none">
-        <BowIllustration className="w-8 h-8 -rotate-12" />
-      </div>
-      <div className="absolute top-1/3 right-8 text-brand-black/15 hidden lg:block pointer-events-none">
-        <BowIllustration className="w-8 h-8 rotate-12" />
-      </div>
 
-      <div className="w-full max-w-5xl mx-auto px-4 sm:px-8 text-center space-y-6 relative z-10">
-        
-        {/* Bow and Sparkle Header */}
-        <div className="inline-flex items-center justify-center space-x-3 text-brand-black">
-          <SparkleDoodle className="w-4 h-4 text-brand-black/60" />
-          <BowIllustration className="w-8 h-8 text-brand-black" />
-          <SparkleDoodle className="w-4 h-4 text-brand-black/60" />
-        </div>
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
 
-        {/* Client Quote Message */}
-        <h2 className="font-handwriting font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-brand-black leading-tight max-w-3xl mx-auto">
-          “Good pieces make brighter days.”
-        </h2>
+          {/* Highlight Message */}
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="w-10 h-10 rounded-full bg-brand-ivory flex items-center justify-center text-brand-black shadow-xs flex-shrink-0">
+              <BowIllustration className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-handwriting font-bold text-2xl sm:text-3xl text-brand-black tracking-tight leading-none">
+                Curated in Lagos · Handpicked with Love ♡
+              </p>
+              <p className="text-xs text-brand-black/70 font-normal mt-0.5">
+                New boutique arrivals and limited restocks every Friday.
+              </p>
+            </div>
+          </div>
 
-        {/* Small subtitle */}
-        <p className="text-sm sm:text-base font-light text-brand-black/80 max-w-lg mx-auto leading-relaxed">
-          Curated silhouettes made to be worn on repeat. Step out in confidence every day of the week.
-        </p>
-
-        {/* Button */}
-        <div className="pt-2">
+          {/* Action Link */}
           <Link
             href="/shop"
-            className="inline-flex items-center space-x-2 px-8 py-3.5 rounded-full bg-brand-black text-brand-ivory hover:bg-brand-black-light text-xs sm:text-sm font-bold uppercase tracking-wider shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+            className="inline-flex items-center space-x-2 px-6 py-2.5 rounded-full bg-brand-black text-brand-ivory hover:bg-brand-black-light text-xs font-bold uppercase tracking-wider shadow-xs hover:shadow-md transition-all flex-shrink-0"
           >
-            <span>SHOP NOW</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Explore Boutique</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
     </section>
   );
 }
-
