@@ -1,16 +1,22 @@
-import { Baloo_2, Manrope } from "next/font/google";
+/**
+ * Cloudlette Typography System
+ * Display / Logo: Caveat (Playful boutique handwritten display font)
+ * Body / UI: Plus Jakarta Sans (Clean, elegant, modern grotesque font)
+ */
 
-export const baloo2 = Baloo_2({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-heading",
-});
+export const caveat = {
+  variable: "font-handwriting",
+  className: "font-handwriting",
+};
 
-export const baloo = baloo2;
-export const fontHeading = baloo2;
+export const fontSans = {
+  variable: "font-sans",
+  className: "font-sans",
+};
 
-export const fontSans = Manrope({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
+export const fontHandwriting = caveat;
+export const fontHeading = caveat;
+
+// Backward-compatibility aliases for legacy components
+export const baloo2 = caveat;
+export const baloo = caveat;
