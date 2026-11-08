@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:5000";
 
 export async function GET() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get("auth_token")?.value;
 
   if (!token) {

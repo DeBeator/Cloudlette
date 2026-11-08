@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRequireAdmin } from "@/lib/useRequireAdmin";
@@ -22,11 +22,12 @@ interface VariantInput {
   stockQty: number;
 }
 
-export default function EditProductPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function EditProductPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = use(props.params);
   // useRequireAdmin(); // TODO: uncomment when backend auth is live
 
   const router = useRouter();

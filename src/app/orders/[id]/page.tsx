@@ -1,4 +1,5 @@
-"use client";
+"use client";;
+import { use } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -98,11 +99,12 @@ function OrderTimelineStepper({ status }: { status: MockOrder["status"] }) {
   );
 }
 
-export default function OrderDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function OrderDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = use(props.params);
   useRequireAuth();
 
   // TODO: replace mock data with GET /api/orders/:id

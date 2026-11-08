@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ShopCatalog } from "@/components/shop/ShopCatalog";
 
 interface CategoryPageProps {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }
 
 const CATEGORY_DATA: Record<
@@ -73,9 +73,8 @@ const CATEGORY_DATA: Record<
   },
 };
 
-export async function generateMetadata({
-  params,
-}: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata(props: CategoryPageProps): Promise<Metadata> {
+  const params = await props.params;
   const cat = CATEGORY_DATA[params.category.toLowerCase()];
 
   if (!cat) {
@@ -97,7 +96,8 @@ export async function generateMetadata({
   };
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage(props: CategoryPageProps) {
+  const params = await props.params;
   const cat = CATEGORY_DATA[params.category.toLowerCase()];
 
   if (!cat) {

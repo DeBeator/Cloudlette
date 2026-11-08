@@ -3,12 +3,11 @@ import { getProductBySlug } from "@/lib/mock-data";
 import { ProductDetailClient } from "./ProductDetailClient";
 
 interface ProductPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata(props: ProductPageProps): Promise<Metadata> {
+  const params = await props.params;
   const product = getProductBySlug(params.slug);
 
   if (!product) {
@@ -43,6 +42,7 @@ export async function generateMetadata({
   };
 }
 
-export default function ProductDetailPage({ params }: ProductPageProps) {
+export default async function ProductDetailPage(props: ProductPageProps) {
+  const params = await props.params;
   return <ProductDetailClient slug={params.slug} />;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRequireAdmin } from "@/lib/useRequireAdmin";
@@ -17,11 +17,12 @@ export const dynamic = "force-dynamic";
 // TODO: replace with GET /api/orders/:id (admin)
 // TODO: PUT /api/orders/:id/status
 
-export default function AdminOrderDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function AdminOrderDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = use(props.params);
   // useRequireAdmin(); // TODO: uncomment when backend auth is live
 
   const { showToast } = useToast();
