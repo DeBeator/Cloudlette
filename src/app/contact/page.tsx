@@ -5,7 +5,8 @@ import { FadeInSection } from "@/components/animations/FadeInSection";
 import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Phone, Mail, MapPin, Instagram } from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
+import { InstagramIcon } from "@/components/ui/instagram-icon";
 
 export default function ContactPage() {
   const { showToast } = useToast();
@@ -105,7 +106,7 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-full bg-white border border-blush/60 text-xs font-medium text-dark hover:border-gold hover:text-gold-hover transition-all duration-200 shadow-2xs"
               >
-                <Instagram className="h-3.5 w-3.5 stroke-[1.5] text-gold" />
+                <InstagramIcon className="h-3.5 w-3.5 text-gold" strokeWidth={1.5} size={14} />
                 <span>Instagram</span>
               </a>
 

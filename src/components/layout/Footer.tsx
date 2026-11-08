@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Instagram, MessageCircle, Mail, MapPin } from "lucide-react";
+import { MessageCircle, Mail, MapPin } from "lucide-react";
+import { InstagramIcon } from "@/components/ui/instagram-icon";
 import { SparkleDoodle } from "@/components/ui/decorative-icons";
 
 export function Footer() {
@@ -49,7 +50,7 @@ export function Footer() {
                 className="w-10 h-10 rounded-full bg-brand-ivory/10 text-brand-ivory hover:text-brand-butter hover:bg-brand-ivory/20 transition-all flex items-center justify-center"
                 aria-label="Follow Cloudlette on Instagram"
               >
-                <Instagram className="h-4 w-4 stroke-[1.8]" />
+                <InstagramIcon className="h-4 w-4" strokeWidth={1.8} size={16} />
               </a>
               <a
                 href="https://www.tiktok.com/@bycloudlette"
