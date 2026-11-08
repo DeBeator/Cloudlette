@@ -1,0 +1,47 @@
+# .dev.vars.example — Cloudflare Workers local development secrets
+# ─────────────────────────────────────────────────────────────────────────────
+# Copy this file to .dev.vars and fill in real values before running
+# `npm run preview`. .dev.vars is in .gitignore and must NEVER be committed.
+#
+# IMPORTANT — two different kinds of Cloudflare variable:
+#
+#   RUNTIME SECRETS  → Workers & Pages › cloudlette › Settings › Variables and Secrets
+#     These are injected into the Worker at request time. Only server-side code
+#     (route handlers, etc.) can read them. Use this for BACKEND_URL.
+#
+#   BUILD VARIABLES  → Workers & Pages › cloudlette › Settings › Builds
+#     Next.js inlines NEXT_PUBLIC_* variables at compile time (during
+#     `opennextjs-cloudflare build`). They MUST be set as build-time env vars,
+#     not only as runtime secrets, otherwise the browser bundle will be missing
+#     them. Set every NEXT_PUBLIC_* variable under the "Build" settings panel.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── SERVER-ONLY (runtime secret) ─────────────────────────────────────────────
+
+# Base URL of the ASP.NET Core API on SmarterASP.NET.
+# Read at request time by the Next.js auth proxy routes (/api/auth/*).
+# Add as a SECRET (encrypted) in Cloudflare dashboard › Runtime Variables.
+# Currently points to the existing backend host — will switch to the new
+# api.cloudlette.com subdomain once the domain is configured.
+BACKEND_URL=https://your-current-backend.smarterasp.net
+
+# ── CLIENT-SIDE (build-time — MUST be set in Cloudflare Builds settings) ─────
+
+# API mode: "mock" (placeholder data) or "live" (real backend).
+# Set to "live" in production so the app calls the real API.
+NEXT_PUBLIC_API_MODE=live
+
+# Public API base URL for browser-side catalog/non-auth requests.
+# Leave empty if all browser requests are proxied through the same origin.
+# Currently points to the existing backend host — will switch to the new
+# api.cloudlette.com subdomain once the domain is configured.
+NEXT_PUBLIC_API_URL=https://your-current-backend.smarterasp.net
+
+# Paystack publishable key — this is intentionally public (it is designed to
+# be exposed in the browser). No need to mark it as a Cloudflare Secret;
+# a plain build variable is fine.
+NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=pk_live_xxxxxxxxxxxx
+
+# Canonical app URL. Replace the placeholder with your real production domain.
+NEXT_PUBLIC_APP_URL=https://cloudlette.com
