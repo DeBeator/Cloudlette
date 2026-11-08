@@ -1,0 +1,19 @@
+{
+  // Cloudflare Workers configuration for Cloudlette (OpenNext adapter)
+  "name": "cloudlette",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-11-08",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Static assets served directly by Cloudflare CDN
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  // Worker observability (Logpush / Tail Workers in the dashboard)
+  "observability": {
+    "enabled": true
+  }
+}
+

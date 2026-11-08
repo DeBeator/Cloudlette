@@ -24,12 +24,28 @@ const nextConfig = {
     ];
   },
   images: {
+    // Custom loader delegates optimisation to Cloudinary / Unsplash CDNs
+    // instead of Next.js's built-in /_next/image server (which cannot run on
+    // Cloudflare Workers). See src/lib/image-loader.ts for the implementation.
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
+    // Custom loader delegates optimisation to Cloudinary / Unsplash CDNs
+    // instead of Next.js's built-in /_next/image server (which cannot run on
+    // Cloudflare Workers). See src/lib/image-loader.ts for the implementation.
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
       {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
       {
+        // OCI Object Storage — no URLs present in the codebase yet, kept for
+        // when the backend starts returning OCI-hosted product images.
         protocol: "https",
         hostname: "*.objectstorage.*.oci.customer-oci.com",
       },
