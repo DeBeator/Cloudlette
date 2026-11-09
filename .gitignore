@@ -7,3 +7,5 @@ node_modules/
 
 # Cloudflare local secrets (never commit real secrets)
 .dev.vars
+
+.wrangler/
