@@ -139,3 +139,5 @@ Locations where client product & banner photography should be replaced:
 - `src/app/product/[id]/page.tsx:L180`: `// TODO: replace with real product photography from client`
 - `src/app/login/page.tsx:L167`: `// TODO: client photography`
 - `src/app/signup/page.tsx:L235`: `// TODO: client photography`
+
+.
